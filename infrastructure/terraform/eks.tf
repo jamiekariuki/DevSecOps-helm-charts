@@ -35,7 +35,7 @@ module "eks" {
       instance_types = ["m5.xlarge"]
 
       min_size     = 1
-      max_size     = 5
+      max_size     = 3
       desired_size = 1
     }
   }
@@ -58,8 +58,9 @@ resource "helm_release" "argocd" {
   depends_on = [module.eks]
 }
 
-//service account for backend pods
-resource "kubernetes_service_account" "backend_sa" {
+
+//service account for eso 
+resource "kubernetes_service_account" "eso_sa" {
   metadata {
     name = var.service_account_name
     namespace = var.ENV_PREFIX
@@ -70,4 +71,82 @@ resource "kubernetes_service_account" "backend_sa" {
   }
 
   depends_on = [module.eks]
+}
+
+//helm isntall eso
+resource "helm_release" "external_secrets" {
+  name = "external-secrets"
+  repository = "https://charts.external-secrets.io"
+  chart = "external-secrets"
+  namespace = "external-secrets"
+  create_namespace = true
+
+  depends_on = [ module.eks ]
+}
+
+//secret store for eso
+resource "kubernetes_manifest" "secretstore" {
+  manifest = yamldecode(<<EOF
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: secretstore
+  namespace: ${var.ENV_PREFIX}
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: ${var.region}
+      auth:
+        jwt:
+          serviceAccountRef:
+            name:${var.service_account_name}
+  EOF
+)
+
+depends_on = [ helm_release.external_secrets, kubernetes_service_account.eso_sa ]
+
+}
+
+//external secrete
+resource "kubernetes_manifest" "secretstore" {
+  manifest = yamldecode(<<EOF
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: db-credentials
+spec:
+  refreshInterval: 5m
+  secretStoreRef:
+    name: secretstore
+    kind: SecretStore
+  target:
+    name: db-credentials
+    creationPolicy: Owner
+  data:
+  - secretKey: POSTGRES_USER
+    remoteRef:
+      key: ${module.db.db_instance_master_user_secret_arn}
+      property: username
+  - secretKey: POSTGRES_PASSWORD"
+    remoteRef:
+      key: ${module.db.db_instance_master_user_secret_arn}
+      property: password
+  - secretKey: POSTGRES_DB
+    remoteRef:
+      key: ${module.db.db_instance_master_user_secret_arn}
+      property: dbname
+  - secretKey: POSTGRES_HOST
+    remoteRef:
+      key: ${module.db.db_instance_master_user_secret_arn}
+      property: host           
+  - secretKey: POSTGRES_PORT
+    remoteRef:
+      key: ${module.db.db_instance_master_user_secret_arn}
+      property: port
+  EOF
+)
+
+depends_on = [ kubernetes_manifest.secretstore ]
+
 }

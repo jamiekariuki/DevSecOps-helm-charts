@@ -29,5 +29,4 @@ variable "ENV_PREFIX" {
       condition = contains(["dev", "stage", "prod"], var.ENV_PREFIX)
       error_message = "provide an environment"
     }
-  
 }

@@ -4,7 +4,7 @@ module "security_group" {
   version = "~> 5.0"
 
   name        = "${var.ENV_PREFIX}-db-sg"
-  description = "Complete PostgreSQL example security group"
+  description = "PostgreSQL security group"
   vpc_id      = module.vpc.vpc_id
 
   # ingress
@@ -98,5 +98,10 @@ module "db" {
   }
   cloudwatch_log_group_tags = {
     "Sensitive" = "high"
+  }
+
+  tags = {
+    Environment = var.ENV_PREFIX
+    Terraform   = "true"
   }
 }

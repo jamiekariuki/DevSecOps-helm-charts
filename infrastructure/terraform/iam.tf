@@ -23,8 +23,8 @@ module "iam_policy" {
       "Statement": [
         {
           "Action": [
-            "secretmanager:GetSecretValue",
-            "secretmanager:DescribeSecret"
+            "secretsmanager:GetSecretValue",
+            "secretsmanager:DescribeSecret"
           ],
           "Effect": "Allow",
           "Resource": "${module.db.db_instance_master_user_secret_arn}"
@@ -34,8 +34,8 @@ module "iam_policy" {
   EOF
 
   tags = {
+    Environment = var.ENV_PREFIX
     Terraform   = "true"
-    Environment = "dev"
   }
 }
 
@@ -52,7 +52,7 @@ module "external_secrets_irsa" {
   oidc_providers = {
     this = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["${var.ENV_PREFIX}:${var.service_account_name}"]  # your service account namespace:name
+      namespace_service_accounts = ["${var.ENV_PREFIX}:${var.service_account_name}"] 
     }
   }
 
