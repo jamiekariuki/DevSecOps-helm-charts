@@ -1,3 +1,10 @@
+//kms encryption for eks secrets in etcd
+resource "aws_kms_key" "k8s_encryption" {
+  description             = "KMS key for encrypting EKS secrets"
+  deletion_window_in_days = 10
+  enable_key_rotation     = true
+}
+
 //eks
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -15,6 +22,11 @@ module "eks" {
     vpc-cni                = {
       before_compute = true
     }
+  }
+
+  encryption_config = {
+    provider_key_arn = aws_kms_key.k8s_encryption.arn
+    resources        = ["secrets"]
   }
 
   # Optional
