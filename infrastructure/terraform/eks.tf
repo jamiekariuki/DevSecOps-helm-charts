@@ -24,10 +24,11 @@ module "eks" {
     }
   }
 
-  encryption_config = {
-    provider_key_arn = aws_kms_key.k8s_encryption.arn
-    resources        = ["secrets"]
-  }
+encryption_config = {
+  provider_key_arn = aws_kms_key.k8s_encryption.arn
+  resources        = ["secrets"]
+}
+
 
   # Optional
   endpoint_public_access = true
@@ -58,6 +59,13 @@ module "eks" {
   }
 }
 
+resource "kubernetes_namespace" "env" {
+  metadata {
+    name = var.ENV_PREFIX
+  }
+}
+
+
 //helm resource for argocd  (installing argocd)
 resource "helm_release" "argocd" {
   name             = "argocd"
@@ -82,7 +90,7 @@ resource "kubernetes_service_account" "eso_sa" {
     }
   }
 
-  depends_on = [module.eks]
+  depends_on = [module.eks, kubernetes_namespace.env]
 }
 
 //helm isntall eso
@@ -112,8 +120,8 @@ spec:
       auth:
         jwt:
           serviceAccountRef:
-            name:${var.service_account_name}
-  EOF
+            name: ${var.service_account_name}
+EOF
 )
 
 depends_on = [ helm_release.external_secrets, kubernetes_service_account.eso_sa ]
@@ -127,6 +135,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: db-credentials
+  namespace: ${var.ENV_PREFIX}
 spec:
   refreshInterval: 5m
   secretStoreRef:
@@ -140,7 +149,7 @@ spec:
     remoteRef:
       key: ${module.db.db_instance_master_user_secret_arn}
       property: username
-  - secretKey: POSTGRES_PASSWORD"
+  - secretKey: POSTGRES_PASSWORD
     remoteRef:
       key: ${module.db.db_instance_master_user_secret_arn}
       property: password
@@ -151,14 +160,13 @@ spec:
   - secretKey: POSTGRES_HOST
     remoteRef:
       key: ${module.db.db_instance_master_user_secret_arn}
-      property: host           
+      property: host
   - secretKey: POSTGRES_PORT
     remoteRef:
       key: ${module.db.db_instance_master_user_secret_arn}
       property: port
-  EOF
+EOF
 )
 
-depends_on = [ kubernetes_manifest.secretstore ]
-
+  depends_on = [ kubernetes_manifest.secretstore ]
 }
