@@ -2,10 +2,7 @@ name: Terraform
 
 on:
   push:
-    branches:
-    - main
-    paths:
-    - "infrastructure/terraform/**"
+    branches: [ main ]
 
   workflow_dispatch:
     inputs:
