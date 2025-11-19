@@ -121,7 +121,7 @@ depends_on = [ helm_release.external_secrets, kubernetes_service_account.eso_sa 
 }
 
 //external secrete
-resource "kubernetes_manifest" "secretstore" {
+resource "kubernetes_manifest" "external_secrets_manifest" {
   manifest = yamldecode(<<EOF
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
