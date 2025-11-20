@@ -29,7 +29,6 @@ encryption_config = {
   resources        = ["secrets"]
 }
 
-
   # Optional
   endpoint_public_access = true
 
@@ -59,15 +58,6 @@ encryption_config = {
   }
 }
 
-resource "kubernetes_namespace" "env" {
-  metadata {
-    name = var.ENV_PREFIX
-  }
-
-  depends_on = [ module.eks ]
-}
-
-
 //helm resource for argocd  (installing argocd)
 resource "helm_release" "argocd" {
   name             = "argocd"
@@ -81,8 +71,17 @@ resource "helm_release" "argocd" {
 }
 
 
+/* resource "kubernetes_namespace" "env" {
+  metadata {
+    name = var.ENV_PREFIX
+  }
+
+  depends_on = [ module.eks ]
+} */
+
+
 //service account for eso 
-resource "kubernetes_service_account" "eso_sa" {
+/* resource "kubernetes_service_account" "eso_sa" {
   metadata {
     name = var.service_account_name
     namespace = var.ENV_PREFIX
@@ -93,10 +92,10 @@ resource "kubernetes_service_account" "eso_sa" {
   }
 
   depends_on = [module.eks, kubernetes_namespace.env]
-}
+} */
 
 //helm isntall eso
-resource "helm_release" "external_secrets" {
+/* resource "helm_release" "external_secrets" {
   name = "external-secrets"
   repository = "https://charts.external-secrets.io"
   chart = "external-secrets"
@@ -104,10 +103,10 @@ resource "helm_release" "external_secrets" {
   create_namespace = true
 
   depends_on = [ module.eks ]
-}
+} */
 
 //secret store for eso
-resource "kubernetes_manifest" "secretstore" {
+/* resource "kubernetes_manifest" "secretstore" {
   manifest = yamldecode(<<EOF
 apiVersion: external-secrets.io/v1
 kind: SecretStore
@@ -123,15 +122,16 @@ spec:
         jwt:
           serviceAccountRef:
             name: ${var.service_account_name}
+            namespace: ${var.ENV_PREFIX}
 EOF
 )
 
 depends_on = [module.eks, helm_release.external_secrets, kubernetes_service_account.eso_sa ]
 
-}
+} */
 
 //external secret
-resource "kubernetes_manifest" "external_secrets_manifest" {
+/* resource "kubernetes_manifest" "external_secrets_manifest" {
   manifest = yamldecode(<<EOF
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -171,4 +171,4 @@ EOF
 )
 
   depends_on = [module.eks, kubernetes_manifest.secretstore ]
-}
+} */
