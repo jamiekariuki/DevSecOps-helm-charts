@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 
-# Get cluster info
+/* # Get cluster info
 data "aws_eks_cluster" "this" {
   name = module.eks.cluster_name
 
@@ -34,4 +34,4 @@ provider "helm" {
     token                  = data.aws_eks_cluster_auth.this.token
   }
 }
-
+ */
