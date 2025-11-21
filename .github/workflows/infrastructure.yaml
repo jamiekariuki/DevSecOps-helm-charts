@@ -99,6 +99,10 @@ jobs:
     - terraform-filter
     - terraform
     if: always() # always runs
+    outputs:
+      tf_changed: ${{ needs.terraform-filter.outputs.changed }}
+    steps:
+    - run: echo "Terraform changed? ${{ needs.terraform-filter.outputs.changed }}"
 
   # Step 2: configure argocd
   Argocd:
