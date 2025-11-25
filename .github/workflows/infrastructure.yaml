@@ -87,7 +87,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: ./.github/actions/argocd-run
+    - uses: ./.github/actions/helm
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -98,8 +98,7 @@ jobs:
   app-configure-independent:
     runs-on: ubuntu-latest
     needs:
-    - detect-changes
-    - terraform-gate
+    - install-argocd-independent
     #  if: needs.detect-changes.outputs.both_changed == 'true'
 
     steps:
@@ -135,8 +134,7 @@ jobs:
   app-configure-dependent:
     runs-on: ubuntu-latest
     needs:
-    - detect-changes
-    - terraform-gate
+    - install-argocd-dependent
     #  if: needs.detect-changes.outputs.both_changed == 'true'
 
     steps:
