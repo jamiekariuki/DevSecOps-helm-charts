@@ -36,7 +36,7 @@ jobs:
           terraform:
             - 'infrastructure/terraform/**'
           argocd:
-            - 'infrastructure/argo-cd/**'
+            - 'infrastructure/helm/**'
 
     - id: check_both
       run: |
@@ -78,7 +78,7 @@ jobs:
     - run: echo "Both terraform and argocd changed, terraform completed. Proceeding to argocd..."
 
   # Step 2: ArgoCD Apply - Independent path (only argocd changed)
-  argocd-independent:
+  install-argocd-independent:
     runs-on: ubuntu-latest
     needs: detect-changes
     if: |
@@ -95,8 +95,26 @@ jobs:
         cluster_name: ${{ secrets.CLUSTER_NAME }}
         aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
 
+  app-configure-independent:
+    runs-on: ubuntu-latest
+    needs:
+    - detect-changes
+    - terraform-gate
+    #  if: needs.detect-changes.outputs.both_changed == 'true'
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/argocd-run
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region: ${{ secrets.REGION }}
+        cluster_name: ${{ secrets.CLUSTER_NAME }}
+        aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+        directory: terraform/argocd
+
   # Step 3: ArgoCD Apply - Dependent path (both changed, waits for terraform)
-  argocd-dependent:
+  install-argocd-dependent:
     runs-on: ubuntu-latest
     needs:
     - detect-changes
@@ -112,3 +130,22 @@ jobs:
         region: ${{ secrets.REGION }}
         cluster_name: ${{ secrets.CLUSTER_NAME }}
         aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+        directory: terraform/helm
+
+  app-configure-dependent:
+    runs-on: ubuntu-latest
+    needs:
+    - detect-changes
+    - terraform-gate
+    #  if: needs.detect-changes.outputs.both_changed == 'true'
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/argocd-run
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region: ${{ secrets.REGION }}
+        cluster_name: ${{ secrets.CLUSTER_NAME }}
+        aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+        directory: terraform/argocd
