@@ -34,15 +34,15 @@ jobs:
         aws-region: ${{ secrets.REGION }}
 
     - name: Terraform Init
-      working-directory: infrastructure/terraform
+      working-directory: terraform/infrastructure
       run: terraform init -upgrade
 
     - name: Select Terraform Workspace
-      working-directory: infrastructure/terraform
+      working-directory: terraform/infrastructure
       run: terraform workspace select -or-create=true $ENVIRONMENT
 
     - name: Terraform Destroy
-      working-directory: infrastructure/terraform
+      working-directory: terraform/infrastructure
       env:
         TF_IN_AUTOMATION: true
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}

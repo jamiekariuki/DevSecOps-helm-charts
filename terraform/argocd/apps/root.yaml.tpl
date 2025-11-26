@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: "${repo_url}"
     targetRevision: "${target_revision}"
-    path: infrastructure/argocd/apps
+    path: terraform/argocd/apps
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

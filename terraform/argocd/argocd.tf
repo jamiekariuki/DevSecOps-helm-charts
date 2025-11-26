@@ -26,14 +26,15 @@ locals {
 }
 
 resource "kubernetes_manifest" "argocd_apps" {
-  for_each = { for f in local.argocd_manifests : f => f }
+  depends_on = [ kubernetes_namespace.env, kubernetes_namespace.namespaces ]
 
-  manifest = yamldecode(
-    templatefile("${path.module}/apps/${each.value}", {
-      repo_url        = var.repo_url
-      target_revision = var.target_revision
-    })
-  )
+  for_each = { for f in local.argocd_manifests : trim(f, ".tpl") => f }
+
+  manifest = yamldecode(templatefile("${path.module}/apps/${each.value}", {
+    repo_url        = var.repo_url
+    target_revision = var.target_revision
+    env_prefix      = var.ENV_PREFIX
+  }))
 }
 
 
