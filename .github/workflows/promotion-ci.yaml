@@ -1,0 +1,130 @@
+name: Env Promotion
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'app/**/values-*.yaml'
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+    # 1️⃣ Checkout repo
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    # 2️⃣ Get last commit info
+    - name: Check last commit author
+      id: commit
+      run: |
+        LAST_AUTHOR=$(git log -1 --pretty=format:'%an')
+        echo "Last commit author: $LAST_AUTHOR"
+
+        if [[ "$LAST_AUTHOR" != "Your Bot Name" ]]; then
+          echo "Last commit not from bot, stopping workflow."
+          exit 0
+        fi
+
+    # 3️⃣ Determine latest tag
+    - name: Determine latest tag
+      id: tag
+      run: |
+        git fetch --tags
+        LAST_TAG=$(git tag --sort=-v:refname | grep -E "^(dev|stage|prod)-(frontend|backend)-v[0-9]+\.[0-9]+\.[0-9]+$" | head -n1)
+
+        if [ -z "$LAST_TAG" ]; then
+          echo "No previous tag found. Nothing to promote."
+          exit 0
+        fi
+
+        IFS='-' read -r ENV SERVICE VERSION_FULL <<< "$LAST_TAG"
+        VERSION="${VERSION_FULL#v}"
+
+        echo "ENV=$ENV" >> $GITHUB_OUTPUT
+        echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+    # 4️⃣ Compute next environment
+    - name: Compute next environment
+      id: next-env
+      run: |
+        ENV="${{ steps.tag.outputs.ENV }}"
+        SERVICE="${{ steps.tag.outputs.SERVICE }}"
+        VERSION="${{ steps.tag.outputs.VERSION }}"
+
+        if [[ "$ENV" == "dev" ]]; then
+          NEXT_ENV="stage"
+        elif [[ "$ENV" == "stage" ]]; then
+          NEXT_ENV="prod"
+        else
+          echo "Already prod, nothing to promote."
+          exit 0
+        fi
+
+        echo "NEXT_ENV=$NEXT_ENV" >> $GITHUB_OUTPUT
+        echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+    # 5️⃣ Delete previous promotion branch if exists
+    - name: Delete previous promotion branch
+      run: |
+        BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
+
+        if git ls-remote --exit-code --heads origin $BRANCH; then
+          git push origin --delete $BRANCH
+        fi
+        if git show-ref --verify --quiet refs/heads/$BRANCH; then
+          git branch -D $BRANCH
+        fi
+
+    # 6️⃣ Create new promotion branch
+    - name: Create promotion branch
+      run: |
+        BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
+        git checkout -b $BRANCH
+
+    # 7️⃣ Update next environment values file
+    - name: Update values file
+      run: |
+        CHART_DIR="helm/crud-app-chart"
+        NEXT_ENV="${{ steps.next-env.outputs.NEXT_ENV }}"
+        SERVICE="${{ steps.tag.outputs.SERVICE }}"
+        VERSION="${{ steps.tag.outputs.VERSION }}"
+
+        VALUES_FILE="$CHART_DIR/values-$NEXT_ENV.yaml"
+        yq e -i ".${SERVICE}.image.tag = \"$VERSION\"" "$VALUES_FILE"
+
+    # 8️⃣ Commit & push branch
+    - name: Commit & push branch
+      run: |
+        git config --global user.email "bot@github.com"
+        git config --global user.name "Your Bot Name"
+
+        git add "$CHART_DIR/values-$NEXT_ENV.yaml"
+
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+          exit 0
+        fi
+
+        git commit -m "Promote $SERVICE from ${{ steps.tag.outputs.ENV }} → $NEXT_ENV: $VERSION"
+        git push origin HEAD
+
+    # 9️⃣ Create Pull Request
+    - name: Create PR
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: HEAD
+        base: main
+        title: "Promote ${{ steps.tag.outputs.SERVICE }} ${{ steps.tag.outputs.ENV }} → ${{ steps.next-env.outputs.NEXT_ENV }}"
+        body: |
+          This PR promotes ${{ steps.tag.outputs.SERVICE }} from ${{ steps.tag.outputs.ENV }} to ${{ steps.next-env.outputs.NEXT_ENV }}.
+        labels: promotion
