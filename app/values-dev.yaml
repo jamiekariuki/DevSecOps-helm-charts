@@ -1,2 +1,4 @@
+namespace: dev
+
 frontend:
   tag: 0.1
