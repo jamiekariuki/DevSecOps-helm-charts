@@ -37,13 +37,3 @@ else
   echo "PR #$EXISTING_PR already exists for branch $BRANCH"
 fi
 
-# Create Git tag for next environment
-TAG_NAME="${NEXT_ENV}-${SERVICE}-v${VERSION}"
-if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-  echo "Tag $TAG_NAME already exists. Skipping tag creation."
-else
-  echo "Creating tag $TAG_NAME..."
-  git tag "$TAG_NAME"
-  git push origin "$TAG_NAME"
-  echo "Tag $TAG_NAME created and pushed!"
-fi

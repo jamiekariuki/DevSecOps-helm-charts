@@ -129,7 +129,7 @@ jobs:
           exit 1
         fi
 
-        yq e -i ".${SERVICE}.image.tag = \"$VERSION\"" "$VALUES_FILE"
+        yq e -i ".${SERVICE}.image.tag = \"v$VERSION\"" "$VALUES_FILE"
 
         cat "$VALUES_FILE"
 
