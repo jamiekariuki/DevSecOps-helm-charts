@@ -38,7 +38,7 @@ else
 fi
 
 # Create Git tag for next environment
-TAG_NAME="${NEXT_ENV}-${SERVICE}-${VERSION}"
+TAG_NAME="${NEXT_ENV}-${SERVICE}-v${VERSION}"
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
   echo "Tag $TAG_NAME already exists. Skipping tag creation."
 else
