@@ -1,6 +1,9 @@
 namespace: dev
 frontend:
   tag: latest
+  image:
+    repository: ECR_URL
+    tag: v0.1.17
 backend:
   image:
     repository: ECR_URL
