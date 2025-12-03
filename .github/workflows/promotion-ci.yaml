@@ -37,6 +37,8 @@ jobs:
     needs: detect-service
     if: needs.detect-service.outputs.service != 'none'
     runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.next-env.outputs.BRANCH }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -84,15 +86,17 @@ jobs:
           exit 0
         fi
 
+        BRANCH="auto/$ENV-to-$NEXT_ENV-$SERVICE"
 
         echo "NEXT_ENV=$NEXT_ENV" >> $GITHUB_OUTPUT
         echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "BRANCH=$BRANCH" >> $GITHUB_OUTPUT
 
     # 3️⃣ Delete previous promotion branch if exists
     - name: Delete previous promotion branch
       run: |
-        BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
+        BRANCH="${{ steps.next-env.outputs.BRANCH }}"
 
         if git ls-remote --exit-code --heads origin $BRANCH; then
           git push origin --delete $BRANCH
@@ -103,11 +107,9 @@ jobs:
 
     # 4️⃣ Create new promotion branch
     - name: Create promotion branch
-      id: promotion
       run: |
-        BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
+        BRANCH="${{ steps.next-env.outputs.BRANCH }}"
         git checkout -b $BRANCH
-        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
     # 5️⃣ Update next environment values file
     - name: Update values file
@@ -140,15 +142,16 @@ jobs:
           exit 0
         fi
 
-        git commit -m "Promote $SERVICE from ${{ steps.tag.outputs.ENV }} → $NEXT_ENV: $VERSION"
-        git push origin HEAD
+        BRANCH="${{ steps.next-env.outputs.BRANCH }}"
+        git commit -m "Promote ${{ steps.tag.outputs.SERVICE }} from ${{ steps.tag.outputs.ENV }} → ${{ steps.next-env.outputs.NEXT_ENV }}: ${{ steps.tag.outputs.VERSION }}"
+        git push origin $BRANCH
 
     # 7️⃣ Create Pull Request
     - name: Create PR
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ steps.promotion.outputs.BRANCH }}
+        branch: ${{ steps.next-env.outputs.BRANCH }}
         base: main
         title: "Promote ${{ steps.tag.outputs.SERVICE }} ${{ steps.tag.outputs.ENV }} → ${{ steps.next-env.outputs.NEXT_ENV }}"
         body: |
