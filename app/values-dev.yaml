@@ -4,4 +4,5 @@ frontend:
     tag: 0.1.1
 backend:
   image:
-    tag: v0.1.16
+    tag: v0.1.18
+    repository: ECR_URL
