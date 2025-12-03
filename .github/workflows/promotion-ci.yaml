@@ -84,9 +84,6 @@ jobs:
           exit 0
         fi
 
-        echo "${NEXT_ENV}" \
-        echo "${SERVICE}" \
-        echo "${VERSION}" 
 
         echo "NEXT_ENV=$NEXT_ENV" >> $GITHUB_OUTPUT
         echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
@@ -143,7 +140,7 @@ jobs:
         fi
 
         git commit -m "Promote $SERVICE from ${{ steps.tag.outputs.ENV }} → $NEXT_ENV: $VERSION"
-        git push origin HEAD
+        git push origin $BRANCH
 
     # 7️⃣ Create Pull Request
     - name: Create PR

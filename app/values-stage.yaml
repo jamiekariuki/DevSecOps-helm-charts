@@ -3,7 +3,7 @@ frontend:
   tag: latest
   image:
     repository: ECR_URL
-    tag: v0.1.16
+    tag: v0.1.15
 backend:
   image:
     repository: ECR_URtest
