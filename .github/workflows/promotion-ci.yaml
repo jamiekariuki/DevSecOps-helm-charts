@@ -156,6 +156,15 @@ jobs:
         NEXT_ENV="${{ steps.next-env.outputs.NEXT_ENV }}"
         VERSION="${{ steps.tag.outputs.VERSION }}"
 
+        # Ensure label exists
+        LABEL_CHECK=$(gh label list --search "promotion" --json name --jq '.[0].name' || echo "")
+
+        if [ -z "$LABEL_CHECK" ]; then
+          echo "Label 'promotion' not found. Creating it..."
+          gh label create promotion --color FFA500 --description "Env promotion automation"
+        fi
+
+        # Check existing PR
         EXISTING_PR=$(gh pr list --head $BRANCH --base main --json number --jq '.[0].number' 2>/dev/null || echo "")
 
         if [ -z "$EXISTING_PR" ]; then
@@ -168,5 +177,5 @@ jobs:
             --base main \
             --label promotion
         else
-          echo "PR #$EXISTING_PR already exists."
+          echo "PR #$EXISTING_PR already exists for branch $BRANCH"
         fi
