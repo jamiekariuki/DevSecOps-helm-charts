@@ -40,7 +40,7 @@ yq -i ".${SERVICE_NAME}.image.tag = \"$VERSION\"" "$VALUES_FILE"
 git config --global user.email "jamiekariuki18@gmail.com"
 git config --global user.name "jamiekariuki"
 
-git add "$VALUES_FILE"
+git add .
 
 if git diff --cached --quiet; then
   echo "No changes to commit."
