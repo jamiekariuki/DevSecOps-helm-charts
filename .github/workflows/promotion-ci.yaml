@@ -140,36 +140,13 @@ jobs:
         echo "Branch $BRANCH pushed."
 
     # 7️⃣ Create Pull Request
-    - name: Create PR
-      env:
-        GH_TOKEN: ${{ secrets.HELM_REPO_PAT }}
+    - name: Create PR and tag
       run: |
-        BRANCH="${{ steps.next-env.outputs.BRANCH }}"
-        SERVICE="${{ steps.tag.outputs.SERVICE }}"
-        ENV="${{ steps.tag.outputs.ENV }}"
-        NEXT_ENV="${{ steps.next-env.outputs.NEXT_ENV }}"
-        VERSION="${{ steps.tag.outputs.VERSION }}"
-
-        # Check existing PR
-        EXISTING_PR=$(gh pr list --head "$BRANCH" --base main --json number --jq '.[0].number' 2>/dev/null || echo "")
-
-        if [ -z "$EXISTING_PR" ]; then
-          echo "Creating PR..."
-
-          # Create PR with label
-          gh pr create \
-            --title "Promote $SERVICE: $ENV → $NEXT_ENV" \
-            --body "Promoting **$SERVICE** from **$ENV** to **$NEXT_ENV**
-
-          Version: **$VERSION**" \
-                      --head "$BRANCH" \
-                      --base main \
-                      --label promotion
-
-                    echo "PR created successfully!"
-
-                  else
-                    echo "PR #$EXISTING_PR already exists for branch $BRANCH"
-                  fi
-
-#tag 
+        chmod +x .github/actions/scripts/create-pr.sh
+        .github/actions/scripts/create-pr.sh \
+          "${{ steps.next-env.outputs.BRANCH }}" \
+          "${{ steps.tag.outputs.SERVICE }}" \
+          "${{ steps.tag.outputs.ENV }}" \
+          "${{ steps.next-env.outputs.NEXT_ENV }}" \
+          "${{ steps.tag.outputs.VERSION }}" \
+          "${{ secrets.HELM_REPO_PAT }}"
