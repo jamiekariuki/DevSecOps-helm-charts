@@ -4,39 +4,33 @@ on:
   push:
     branches:
     - main
+    path:
+      #    - 'app/**/values-*.yaml
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  detect-service:
+  detect-bot:
     runs-on: ubuntu-latest
     outputs:
-      service: ${{ steps.detect.outputs.service }}
+      bot: ${{ steps.detect.outputs.bot }}
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        fetch-tags: true
 
-    - name: Detect commit author
+    - name: Detect bot commit
       id: detect
       run: |
-        LAST_AUTHOR=$(git log -1 --pretty=format:'%an')
-        echo "Last commit author: $LAST_AUTHOR"
+        chmod +x .github/actions/scripts/bot-commit.sh
 
-        if [[ "$LAST_AUTHOR" != "jamiekariuki" ]]; then
-          echo "service=none" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-
-        echo "service=ok" >> $GITHUB_OUTPUT
-        echo "Commit is valid for promotion."
+        .github/actions/scripts/bot-commit.sh "jamiekariuki"
 
   promote:
-    needs: detect-service
-    if: needs.detect-service.outputs.service != 'none'
+    needs: detect-bot
+    if: needs.detect-bot.outputs.bot = 'true'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -177,3 +171,5 @@ jobs:
                   else
                     echo "PR #$EXISTING_PR already exists for branch $BRANCH"
                   fi
+
+#tag 
