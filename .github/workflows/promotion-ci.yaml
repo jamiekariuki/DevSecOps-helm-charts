@@ -28,9 +28,21 @@ jobs:
 
         .github/actions/scripts/bot-commit.sh "jamiekariuki"
 
-  promote:
+  create-tag:
     needs: detect-bot
     if: needs.detect-bot.outputs.bot == 'true'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - run: |
+        chmod +x .github/actions/scripts/create-tag.sh
+        .github/actions/scripts/create-tag.sh      
+
+  promote:
+    needs: create-tag
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
