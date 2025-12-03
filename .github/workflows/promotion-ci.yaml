@@ -26,7 +26,7 @@ jobs:
       run: |
         chmod +x .github/actions/scripts/bot-commit.sh
 
-        .github/actions/scripts/bot-commit.sh "jamiekariuki"
+        .github/actions/scripts/bot-commit.sh "bot"
 
   create-tag:
     needs: detect-bot
@@ -136,7 +136,7 @@ jobs:
     - name: Commit & push branch
       run: |
         git config --global user.email "jamiekariuki18@gmail.com"
-        git config --global user.name "jamiekariuki"
+        git config --global user.name "bot"
 
         git add app/
 
