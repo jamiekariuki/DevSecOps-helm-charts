@@ -1,6 +1,8 @@
 namespace: prod
 frontend:
   tag: latest
+  image:
+    tag: 0.1.17
 backend:
   image:
     repository: ECR_URL
