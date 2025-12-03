@@ -27,7 +27,7 @@ jobs:
         LAST_AUTHOR=$(git log -1 --pretty=format:'%an')
         echo "Last commit author: $LAST_AUTHOR"
 
-        if [[ "$LAST_AUTHOR" != "Your Bot Name" ]]; then
+        if [[ "$LAST_AUTHOR" != "jamiekariuki" ]]; then
           echo "Last commit not from bot. Stopping workflow."
           echo "service=none" >> $GITHUB_OUTPUT
           exit 0
