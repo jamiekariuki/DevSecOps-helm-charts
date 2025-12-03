@@ -38,7 +38,7 @@ yq -i ".${SERVICE_NAME}.image.tag = \"$VERSION\"" "$VALUES_FILE"
 
 # --- 3. Commit & Push ---
 git config --global user.email "jamiekariuki18@gmail.com"
-git config --global user.name "jamiekariuki"
+git config --global user.name "bot"
 
 git add .
 
