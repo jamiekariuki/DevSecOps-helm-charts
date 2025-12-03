@@ -46,8 +46,13 @@ if git diff --cached --quiet; then
   echo "No changes to commit."
 else
   git commit -m "${SERVICE_NAME} rollout to ${VERSION} in ${ENVIRONMENT}"
+
+  echo "Syncing with remote main before pushing..."
+  git pull --rebase origin main
+
   git push
 fi
+
 
 # --- 4. Create Tag ---
 FINAL_TAG="${ENVIRONMENT}-${SERVICE_NAME}-${VERSION}"
