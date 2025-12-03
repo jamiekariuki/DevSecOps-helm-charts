@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths:
-    - 'app/**/values-*.yaml'
+      #    - 'app/**/values-*.yaml'
 
 permissions:
   contents: write
