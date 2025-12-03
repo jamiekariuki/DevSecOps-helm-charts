@@ -148,7 +148,7 @@ jobs:
     # 7️⃣ Create Pull Request
     - name: Create PR
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.HELM_REPO_PAT }}
       run: |
         BRANCH="${{ steps.next-env.outputs.BRANCH }}"
         SERVICE="${{ steps.tag.outputs.SERVICE }}"
