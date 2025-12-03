@@ -156,37 +156,24 @@ jobs:
         NEXT_ENV="${{ steps.next-env.outputs.NEXT_ENV }}"
         VERSION="${{ steps.tag.outputs.VERSION }}"
 
-        # Ensure label exists
-        if ! gh label list --json name --jq '.[].name' | grep -qx "promotion"; then
-          echo "Label 'promotion' not found. Creating it..."
-          gh label create promotion --color FFA500 --description "Env promotion automation"
-        fi
-
         # Check existing PR
         EXISTING_PR=$(gh pr list --head "$BRANCH" --base main --json number --jq '.[0].number' 2>/dev/null || echo "")
 
         if [ -z "$EXISTING_PR" ]; then
           echo "Creating PR..."
 
-          # Create PR WITHOUT labels (because GitHub CLI sometimes fails here)
-          PR_NUMBER=$(gh pr create \
+          # Create PR with label
+          gh pr create \
             --title "Promote $SERVICE: $ENV → $NEXT_ENV" \
-            --body "Promoting **$SERVICE** from **$ENV** to **$NEXT_ENV**  
-            
+            --body "Promoting **$SERVICE** from **$ENV** to **$NEXT_ENV**
+
           Version: **$VERSION**" \
-                  --head "$BRANCH" \
-                  --base main \
-                  --json number \
-                  --jq '.number')
+                      --head "$BRANCH" \
+                      --base main \
+                      --label promotion
 
-                echo "PR #$PR_NUMBER created. Adding label..."
+                    echo "PR created successfully!"
 
-                # Add label after PR creation
-                gh pr edit "$PR_NUMBER" --add-label promotion
-
-              else
-                echo "PR #$EXISTING_PR already exists for branch $BRANCH"
-
-                # Ensure the PR has the label
-                gh pr edit "$EXISTING_PR" --add-label promotion || true
-              fi
+                  else
+                    echo "PR #$EXISTING_PR already exists for branch $BRANCH"
+                  fi
