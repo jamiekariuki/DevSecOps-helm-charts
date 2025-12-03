@@ -105,6 +105,7 @@ jobs:
       run: |
         BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
         git checkout -b $BRANCH
+        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
     # 5️⃣ Update next environment values file
     - name: Update values file
@@ -145,7 +146,7 @@ jobs:
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        branch: HEAD
+        branch: $BRANCH
         base: main
         title: "Promote ${{ steps.tag.outputs.SERVICE }} ${{ steps.tag.outputs.ENV }} → ${{ steps.next-env.outputs.NEXT_ENV }}"
         body: |
