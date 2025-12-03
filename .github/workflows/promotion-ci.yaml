@@ -103,6 +103,7 @@ jobs:
 
     # 4️⃣ Create new promotion branch
     - name: Create promotion branch
+      id: promotion
       run: |
         BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
         git checkout -b $BRANCH
@@ -140,14 +141,14 @@ jobs:
         fi
 
         git commit -m "Promote $SERVICE from ${{ steps.tag.outputs.ENV }} → $NEXT_ENV: $VERSION"
-        git push origin $BRANCH
+        git push origin HEAD
 
     # 7️⃣ Create Pull Request
     - name: Create PR
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        branch: $BRANCH
+        branch: ${{ steps.promotion.outputs.BRANCH }}
         base: main
         title: "Promote ${{ steps.tag.outputs.SERVICE }} ${{ steps.tag.outputs.ENV }} → ${{ steps.next-env.outputs.NEXT_ENV }}"
         body: |
