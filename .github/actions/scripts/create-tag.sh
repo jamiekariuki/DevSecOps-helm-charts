@@ -45,12 +45,10 @@ else
   exit 0
 fi
 
-
 echo "---- STEP 4: BUILD NEW TAG ----"
 
 NEW_TAG="${NEXT_ENV}-${SERVICE}-v${VERSION}"
 echo "New tag: $NEW_TAG"
-
 
 echo "---- STEP 5: CREATE TAG ----"
 

@@ -33,7 +33,7 @@ VALUES_FILE="$HELM_CHART_PATH/values-$ENVIRONMENT.yaml"
 echo "Updating $VALUES_FILE..."
 
 # --- 2. Update values.yaml dynamically ---
-yq -i ".${SERVICE_NAME}.image.repository = \"$ECR_URL\"" "$VALUES_FILE"
+yq -i ".${SERVICE_NAME}.image.repository = \"$ECR_URL\"" "$HELM_CHART_PATH/values.yaml"
 yq -i ".${SERVICE_NAME}.image.tag = \"$VERSION\"" "$VALUES_FILE"
 
 # --- 3. Commit & Push ---
