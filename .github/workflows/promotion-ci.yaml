@@ -11,36 +11,61 @@ permissions:
   contents: write
 
 jobs:
-  promote:
+  detect-service:
     runs-on: ubuntu-latest
+    outputs:
+      service: ${{ steps.detect.outputs.service }}
     steps:
-    # 1️⃣ Checkout repo
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         fetch-tags: true
 
-    # 2️⃣ Get last commit info
     - name: Check last commit author
-      id: commit
+      id: author
       run: |
         LAST_AUTHOR=$(git log -1 --pretty=format:'%an')
         echo "Last commit author: $LAST_AUTHOR"
 
         if [[ "$LAST_AUTHOR" != "Your Bot Name" ]]; then
-          echo "Last commit not from bot, stopping workflow."
+          echo "Last commit not from bot. Stopping workflow."
+          echo "service=none" >> $GITHUB_OUTPUT
           exit 0
         fi
 
-    # 3️⃣ Determine latest tag
-    - name: Determine latest tag
+    - name: Detect changed service
+      id: detect
+      run: |
+        FILES=$(git diff --name-only HEAD^ HEAD)
+        echo "Changed files: $FILES"
+
+        if echo "$FILES" | grep -q "values.*frontend"; then
+          echo "service=frontend" >> $GITHUB_OUTPUT
+        elif echo "$FILES" | grep -q "values.*backend"; then
+          echo "service=backend" >> $GITHUB_OUTPUT
+        else
+          echo "service=none" >> $GITHUB_OUTPUT
+
+  promote:
+    needs: detect-service
+    if: needs.detect-service.outputs.service != 'none'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    # 1️⃣ Determine last tag from bot
+    - name: Determine last tag
       id: tag
       run: |
+        SERVICE="${{ needs.detect-service.outputs.service }}"
         git fetch --tags
-        LAST_TAG=$(git tag --sort=-v:refname | grep -E "^(dev|stage|prod)-(frontend|backend)-v[0-9]+\.[0-9]+\.[0-9]+$" | head -n1)
+        LAST_TAG=$(git tag --sort=-v:refname | grep -E "^(dev|stage|prod)-${SERVICE}-v[0-9]+\.[0-9]+\.[0-9]+$" | head -n1)
 
         if [ -z "$LAST_TAG" ]; then
-          echo "No previous tag found. Nothing to promote."
+          echo "No previous tag for $SERVICE found. Exiting."
           exit 0
         fi
 
@@ -51,7 +76,7 @@ jobs:
         echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-    # 4️⃣ Compute next environment
+    # 2️⃣ Compute next environment
     - name: Compute next environment
       id: next-env
       run: |
@@ -64,7 +89,7 @@ jobs:
         elif [[ "$ENV" == "stage" ]]; then
           NEXT_ENV="prod"
         else
-          echo "Already prod, nothing to promote."
+          echo "Already prod. Nothing to promote."
           exit 0
         fi
 
@@ -72,7 +97,7 @@ jobs:
         echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-    # 5️⃣ Delete previous promotion branch if exists
+    # 3️⃣ Delete previous promotion branch if exists
     - name: Delete previous promotion branch
       run: |
         BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
@@ -84,13 +109,13 @@ jobs:
           git branch -D $BRANCH
         fi
 
-    # 6️⃣ Create new promotion branch
+    # 4️⃣ Create new promotion branch
     - name: Create promotion branch
       run: |
         BRANCH="auto/${{ steps.tag.outputs.ENV }}-to-${{ steps.next-env.outputs.NEXT_ENV }}-${{ steps.tag.outputs.SERVICE }}"
         git checkout -b $BRANCH
 
-    # 7️⃣ Update next environment values file
+    # 5️⃣ Update next environment values file
     - name: Update values file
       run: |
         CHART_DIR="helm/crud-app-chart"
@@ -99,9 +124,16 @@ jobs:
         VERSION="${{ steps.tag.outputs.VERSION }}"
 
         VALUES_FILE="$CHART_DIR/values-$NEXT_ENV.yaml"
+
+        # install yq if not present
+        if ! command -v yq &> /dev/null; then
+          sudo wget -q https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+        fi
+
         yq e -i ".${SERVICE}.image.tag = \"$VERSION\"" "$VALUES_FILE"
 
-    # 8️⃣ Commit & push branch
+    # 6️⃣ Commit & push branch
     - name: Commit & push branch
       run: |
         git config --global user.email "bot@github.com"
@@ -117,7 +149,7 @@ jobs:
         git commit -m "Promote $SERVICE from ${{ steps.tag.outputs.ENV }} → $NEXT_ENV: $VERSION"
         git push origin HEAD
 
-    # 9️⃣ Create Pull Request
+    # 7️⃣ Create Pull Request
     - name: Create PR
       uses: peter-evans/create-pull-request@v5
       with:
