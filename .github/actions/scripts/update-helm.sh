@@ -5,30 +5,22 @@ set -e
 SERVICE_NAME="$1"
 VERSION="$2"
 ECR_URL="$3"
-HELM_REPO_URL="$4"
-HELM_REPO_BRANCH="${5:-main}"
-HELM_CHART_PATH="$6"
-ENVIRONMENT="$7"
+HELM_CHART_PATH="$4"
+ENVIRONMENT="$5"
 
 echo "Service: $SERVICE_NAME"
 echo "Version: $VERSION"
 echo "ECR: $ECR_URL"
-echo "External Helm Repo: $HELM_REPO_URL"
 echo "Helm Chart Path: $HELM_CHART_PATH"
-echo "Current environment: $$ENVIRONMENT"
+echo "Environment: $ENVIRONMENT"
 
-if [ -z "$SERVICE_NAME" ] || [ -z "$ENVIRONMENT" ] || [ -z "$VERSION" ] || [ -z "$ECR_URL" ] || [ -z "$HELM_REPO_URL" ] || [ -z "$HELM_CHART_PATH" ]; then
+if [ -z "$SERVICE_NAME" ] || [ -z "$VERSION" ] || [ -z "$ECR_URL" ] || [ -z "$HELM_CHART_PATH" ] || [ -z "$ENVIRONMENT" ]; then
   echo "ERROR: Missing required arguments."
-  echo "Usage: update-helm.sh <service_name> <version> <ecr_url> <helm_repo_url> <branch> <chart_path>"
+  echo "Usage: update-helm.sh <service_name> <version> <ecr_url> <chart_path> <environment>"
   exit 1
 fi
 
-# --- 1. Clone external Helm repo ---
-echo "Cloning helm repo..."
-git clone --branch "$HELM_REPO_BRANCH" "$HELM_REPO_URL" helm-repo
-cd helm-repo
-
-# --- 2. Install yq locally (if not found) ---
+# --- 1. Ensure yq is available ---
 if ! command -v yq &> /dev/null
 then
     echo "Installing yq..."
@@ -38,13 +30,13 @@ fi
 
 VALUES_FILE="$HELM_CHART_PATH/values-$ENVIRONMENT.yaml"
 
-echo "Updating values-$ENVIRONMENT.yaml at $VALUES_FILE..."
+echo "Updating $VALUES_FILE..."
 
-# --- 3. Update values.yaml dynamically for the service ---
+# --- 2. Update values.yaml dynamically ---
 yq -i ".${SERVICE_NAME}.image.repository = \"$ECR_URL\"" "$VALUES_FILE"
 yq -i ".${SERVICE_NAME}.image.tag = \"$VERSION\"" "$VALUES_FILE"
 
-# --- 4. Commit & Push ---
+# --- 3. Commit & Push ---
 git config --global user.email "jamiekariuki18@gmail.com"
 git config --global user.name "jamiekariuki"
 
@@ -54,13 +46,14 @@ if git diff --cached --quiet; then
   echo "No changes to commit."
 else
   git commit -m "${SERVICE_NAME} rollout to ${VERSION} in ${ENVIRONMENT}"
-  git push origin "$HELM_REPO_BRANCH"
+  git push
 fi
 
-echo "creating tag"
-
-FINAL_TAG="${ENVIRONMENT}-${SERVICE}-${VERSION}"
+# --- 4. Create Tag ---
+FINAL_TAG="${ENVIRONMENT}-${SERVICE_NAME}-${VERSION}"
 
 echo "Tagging with: $FINAL_TAG"
 git tag "$FINAL_TAG"
 git push origin "$FINAL_TAG"
+
+echo "Done."
