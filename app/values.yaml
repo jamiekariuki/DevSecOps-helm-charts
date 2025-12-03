@@ -1,5 +1,4 @@
 namespace: default
-
 #===========================================
 #                 app                      
 #===========================================
@@ -11,7 +10,7 @@ frontend:
     app: frontend
     component: frontend
   image:
-    repository: jamiekariuki/frontend
+    repository: 466872246229.dkr.ecr.us-east-1.amazonaws.com/frontend-repository
     tag: "latest"
     pullPolicy: IfNotPresent
   containerPort: 80
@@ -30,7 +29,6 @@ frontend:
     type: NodePort
     port: 80
     nodePort: 31000
-
 #backend
 backend:
   name: backend
@@ -53,13 +51,12 @@ backend:
       memory: "512Mi"
   podAnnotations: {}
   envFrom:
-  - secretRef:
-      name: backend-secrets
+    - secretRef:
+        name: backend-secrets
   #service    
   service:
     type: ClusterIP
     port: 8000
-
 #===========================================
 #                 service account                      
 #===========================================
