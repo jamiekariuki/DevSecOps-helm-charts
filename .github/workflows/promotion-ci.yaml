@@ -33,19 +33,6 @@ jobs:
           exit 0
         fi
 
-    - name: Detect changed service
-      id: detect
-      run: |
-        FILES=$(git diff --name-only HEAD^ HEAD)
-        echo "Changed files: $FILES"
-
-        if echo "$FILES" | grep -q "values.*frontend"; then
-          echo "service=frontend" >> $GITHUB_OUTPUT
-        elif echo "$FILES" | grep -q "values.*backend"; then
-          echo "service=backend" >> $GITHUB_OUTPUT
-        else
-          echo "service=none" >> $GITHUB_OUTPUT
-
   promote:
     needs: detect-service
     if: needs.detect-service.outputs.service != 'none'
@@ -60,18 +47,22 @@ jobs:
     - name: Determine last tag
       id: tag
       run: |
-        SERVICE="${{ needs.detect-service.outputs.service }}"
         git fetch --tags
-        LAST_TAG=$(git tag --sort=-v:refname | grep -E "^(dev|stage|prod)-${SERVICE}-v[0-9]+\.[0-9]+\.[0-9]+$" | head -n1)
+
+        # Get the last tag (latest by creation order)
+        LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
 
         if [ -z "$LAST_TAG" ]; then
-          echo "No previous tag for $SERVICE found. Exiting."
+          echo "No previous tag found. Exiting."
           exit 0
         fi
 
+        # Split tag into ENV, SERVICE, VERSION
+        # Format: dev-frontend-v5.7.3
         IFS='-' read -r ENV SERVICE VERSION_FULL <<< "$LAST_TAG"
         VERSION="${VERSION_FULL#v}"
 
+        echo "LAST_TAG=$LAST_TAG"
         echo "ENV=$ENV" >> $GITHUB_OUTPUT
         echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
@@ -118,7 +109,7 @@ jobs:
     # 5️⃣ Update next environment values file
     - name: Update values file
       run: |
-        CHART_DIR="helm/crud-app-chart"
+        CHART_DIR="app"
         NEXT_ENV="${{ steps.next-env.outputs.NEXT_ENV }}"
         SERVICE="${{ steps.tag.outputs.SERVICE }}"
         VERSION="${{ steps.tag.outputs.VERSION }}"
@@ -136,10 +127,10 @@ jobs:
     # 6️⃣ Commit & push branch
     - name: Commit & push branch
       run: |
-        git config --global user.email "bot@github.com"
-        git config --global user.name "Your Bot Name"
+        git config --global user.email "jamiekariuki18@gmail.com"
+        git config --global user.name "jamiekariuki"
 
-        git add "$CHART_DIR/values-$NEXT_ENV.yaml"
+        git add .
 
         if git diff --cached --quiet; then
           echo "No changes to commit."
