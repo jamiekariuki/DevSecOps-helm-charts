@@ -1,7 +1,7 @@
 namespace: dev
 frontend:
   image:
-    tag: v0.1.27
+    tag: v0.1.28
 backend:
   image:
     tag: v0.1.19
