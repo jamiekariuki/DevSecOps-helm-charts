@@ -3,6 +3,8 @@ set -euo pipefail
 
 echo "---- STEP 1: CHECK MERGE COMMIT ----"
 
+
+#check if last commit came from a pull request so that our first commit will be for stage
 LAST_COMMIT=$(git rev-parse HEAD)
 PARENTS=$(git log -1 --pretty=%P "$LAST_COMMIT")
 NUM_PARENTS=$(echo "$PARENTS" | wc -w)

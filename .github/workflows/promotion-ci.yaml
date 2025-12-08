@@ -12,6 +12,7 @@ permissions:
   pull-requests: write
 
 jobs:
+  # detect if the last commit was from bot(pipline made it)
   detect-bot:
     runs-on: ubuntu-latest
     outputs:
@@ -25,9 +26,9 @@ jobs:
       id: detect
       run: |
         chmod +x .github/actions/scripts/bot-commit.sh
-
         .github/actions/scripts/bot-commit.sh "bot"
 
+  # create tag for the previous environment
   create-tag:
     needs: detect-bot
     if: needs.detect-bot.outputs.bot == 'true'
@@ -50,7 +51,7 @@ jobs:
         fetch-depth: 0
         fetch-tags: true
 
-    # 1️⃣ Determine last tag (dev-frontend-v1.2.3)
+    #  Determine last tag (dev-frontend-v1.2.3)
     - name: Determine last tag
       id: tag
       run: |
@@ -70,7 +71,7 @@ jobs:
         echo "SERVICE=$SERVICE" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-    # 2️⃣ Compute next environment
+    #  Compute next environment
     - name: Compute next environment
       id: next-env
       run: |
@@ -94,20 +95,20 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "BRANCH=$BRANCH" >> $GITHUB_OUTPUT
 
-    # 3️⃣ Delete old branch if exists
+    #  Delete old branch if exists
     - name: Delete previous promotion branch
       run: |
         BRANCH="${{ steps.next-env.outputs.BRANCH }}"
         git push origin --delete $BRANCH 2>/dev/null || true
 
-    # 4️⃣ Create new promotion branch
+    #  Create new promotion branch
     - name: Create promotion branch
       run: |
         git checkout main
         BRANCH="${{ steps.next-env.outputs.BRANCH }}"
         git checkout -b $BRANCH
 
-    # 5️⃣ Update values file
+    #  Update values file for the next env and service
     - name: Update values file
       run: |
         CHART_DIR="app"
@@ -132,7 +133,7 @@ jobs:
 
         cat "$VALUES_FILE"
 
-    # 6️⃣ Commit & push branch
+    #  Commit & push branch
     - name: Commit & push branch
       run: |
         git config --global user.email "jamiekariuki18@gmail.com"
@@ -150,7 +151,7 @@ jobs:
         git push origin $BRANCH
         echo "Branch $BRANCH pushed."
 
-    # 7️⃣ Create Pull Request
+    #  Create Pull Request
     - name: Create PR and tag
       run: |
         chmod +x .github/actions/scripts/create-pr.sh

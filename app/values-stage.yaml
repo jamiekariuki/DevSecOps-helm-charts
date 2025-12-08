@@ -5,3 +5,7 @@ frontend:
 backend:
   image:
     tag: v0.1.16
+
+
+irsaArn: blank
+secretsmanagerArn: blank

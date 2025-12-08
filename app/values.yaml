@@ -51,15 +51,20 @@ backend:
       memory: "512Mi"
   podAnnotations: {}
   envFrom:
-    - secretRef:
-        name: backend-secrets
+  - secretRef:
+      name: backend-secrets
   #service    
   service:
     type: ClusterIP
     port: 8000
+
 #===========================================
 #                 service account                      
 #===========================================
+
+esoServiceAccount:
+  name: eso
+
 #===========================================
 #                 networking                      
 #===========================================
@@ -70,9 +75,29 @@ backend:
 #                 gateway api                      
 #===========================================
 
+
+
+
+
+
 #===========================================
 #                 external secrets                      
 #===========================================
+
+irsaArn: blank
+secretsmanagerArn: blank
+
+secretStore:
+  name: secretstore
+  provider:
+    service: SecretsManager
+    region: us-east-1
+
+externalSecret:
+  name: db-credentials
+  
+  
+   
 
 #===========================================
 #                 istio                      
