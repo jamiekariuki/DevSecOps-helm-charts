@@ -1,12 +1,26 @@
+crds:
+  enabled: true
+
 kube-prometheus-stack:
-  installCRDs: true
+  # Only install CRDs, disable everything else
   prometheus:
     enabled: false
-  alertmanager:
-    enabled: false
   grafana:
+    enabled: false
+  alertmanager:
     enabled: false
   nodeExporter:
     enabled: false
   kubeStateMetrics:
     enabled: false
+  prometheusOperator:
+    enabled: true
+    manageCrds: true
+    # Keep annotations minimal to avoid size limit
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 100m
+        memory: 100Mi

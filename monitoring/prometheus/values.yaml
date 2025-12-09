@@ -1,5 +1,54 @@
 kube-prometheus-stack:
-  installCRDs: false # CRDs already installed by the first chart
+  prometheus-operator:
+    enabled: true
+    manageCrds: false
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 100m
+        memory: 100Mi
 
-monitoring:
-  enabled: true
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      resources:
+        requests:
+          cpu: 500m
+          memory: 2Gi
+        limits:
+          cpu: 1000m
+          memory: 4Gi
+      retention: 24h
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: 50Gi
+
+  grafana:
+    enabled: true
+    adminPassword: "prometheus"
+    persistence:
+      enabled: true
+      size: 10Gi
+
+  alertmanager:
+    enabled: true
+    alertmanagerSpec:
+      storage:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: 10Gi
+
+  nodeExporter:
+    enabled: true
+
+  kubeStateMetrics:
+    enabled: true
