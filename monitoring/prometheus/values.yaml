@@ -1,7 +1,13 @@
-kube-prometheus-stack:
+crds:
+  enabled: true
+
+monitoring:
+  enabled: true
+
+  # Prometheus Operator - CRDs handled by prometheus-operator-crds chart
   prometheus-operator:
     enabled: true
-    manageCrds: false
+    manageCrds: false # CRITICAL: Don't reinstall CRDs
     resources:
       limits:
         cpu: 200m
@@ -10,6 +16,7 @@ kube-prometheus-stack:
         cpu: 100m
         memory: 100Mi
 
+  # Prometheus server
   prometheus:
     enabled: true
     prometheusSpec:
@@ -29,6 +36,7 @@ kube-prometheus-stack:
               requests:
                 storage: 50Gi
 
+  # Grafana
   grafana:
     enabled: true
     adminPassword: "prometheus"
@@ -36,6 +44,7 @@ kube-prometheus-stack:
       enabled: true
       size: 10Gi
 
+  # Alertmanager
   alertmanager:
     enabled: true
     alertmanagerSpec:
@@ -47,8 +56,10 @@ kube-prometheus-stack:
               requests:
                 storage: 10Gi
 
+  # Node Exporter
   nodeExporter:
     enabled: true
 
+  # Kube State Metrics
   kubeStateMetrics:
     enabled: true
