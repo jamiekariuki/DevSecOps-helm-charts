@@ -1,9 +1,6 @@
 dependencies:
-- name: prometheus-operator-crds
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 25.0.0
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
   version: 65.1.0
-digest: sha256:8d8063bc5793f809a78712bfccfbc6e03c0960a3388f9865cb2082f553a14543
-generated: "2025-12-09T15:44:32.024848677+03:00"
+digest: sha256:241fffc11754dd91dae8b32efa0ace3966405f7b71092c5fc9b2639b556c636b
+generated: "2025-12-09T16:32:36.553271839+03:00"
