@@ -75,8 +75,47 @@ esoServiceAccount:
 #                 gateway api                      
 #===========================================
 
+envoy-gateway:
+  # Deploy the Envoy Gateway controller
+  manager:
+    replicas: 2
 
+  # Deploy the Envoy Proxy (data plane)
+  envoyProxy:
+    enable: true
+    replicas: 2
+    service:
+      type: LoadBalancer
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb # or remove if you want classic LB
+        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 
+  # Enable Gateway API integration
+  gateway:
+    controllerName: envoy-gateway
+    gatewayClass:
+      name: envoy
+      create: true
+
+    gateway:
+      name: default-gateway
+      namespace: default
+      listeners:
+      - name: http
+        hostname: "example.com"
+        port: 80
+        protocol: HTTP
+      - name: https
+        port: 443
+        protocol: HTTPS
+        tls:
+          mode: Terminate
+          certificateRefs:
+          - name: my-cert # to be created by cert-manager
+
+  # Enable EnvoyGateway API resources
+  kubernetes:
+    provider: "kubernetes"
 
 
 
@@ -95,7 +134,7 @@ secretStore:
 
 externalSecret:
   name: db-credentials
-  
+
   
    
 
