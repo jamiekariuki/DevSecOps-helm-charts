@@ -25,7 +25,9 @@ appVersion: "1.16.0"
 
 
 dependencies:
-- name: kube-prometheus-stack
-  version: "65.1.0"
+# CRDs installed FIRST (dependency order matters)
+- name: prometheus-operator-crds
+  version: "25.0.0"
   repository: "https://prometheus-community.github.io/helm-charts"
+  alias: crds
   condition: crds.enabled
