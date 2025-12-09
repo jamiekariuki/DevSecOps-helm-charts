@@ -1,0 +1,5 @@
+kube-prometheus-stack:
+  installCRDs: false # CRDs already installed by the first chart
+
+monitoring:
+  enabled: true

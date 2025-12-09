@@ -1,0 +1,12 @@
+kube-prometheus-stack:
+  installCRDs: true
+  prometheus:
+    enabled: false
+  alertmanager:
+    enabled: false
+  grafana:
+    enabled: false
+  nodeExporter:
+    enabled: false
+  kubeStateMetrics:
+    enabled: false
