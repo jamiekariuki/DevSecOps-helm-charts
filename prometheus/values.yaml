@@ -2,13 +2,13 @@ gateway:
   name: eg
   namespace: gateway
 
-hostName: "a4e88f73a92f84ba495419c2d3b90de5-1142177313.us-east-1.elb.amazonaws.com"
+hostName: "grafana.example.com"
 namespace: monitoring
 
 grafana:
   HTTPRoute:
     name: grafana-route
     syncWaves: "1"
-    path: /grafana
+    path: /
     serviceName: prometheus-crd-grafana
     port: 80
