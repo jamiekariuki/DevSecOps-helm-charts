@@ -1,9 +1,9 @@
 gatewayClass:
-  name: envoy
+  name: en
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
   syncWaves: "0"
 
 gateway:
-  name: envoygateway
+  name: en
   namespace: gateway
   syncWaves: "5"
