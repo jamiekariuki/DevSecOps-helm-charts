@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Values.grafana.HTTPRoute.name }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.gateway.syncWaves }} 
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.name }}          
+      namespace: {{ .Values.gateway.namespace }} 
+  hostnames:
+    - {{ .Values.hostName }}           
+  rules:
+    - matches:
+        - path:
+            type: Prefix
+            value: {{ .Values.grafana.HTTPRoute.path }} 
+      forwardTo:
+        - serviceName: {{ .Values.grafana.HTTPRoute.serviceName }} 
+          port: {{ .Values.grafana.HTTPRoute.port }}
