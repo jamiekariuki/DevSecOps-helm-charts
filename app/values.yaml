@@ -71,6 +71,7 @@ esoServiceAccount:
 #===========================================
 #                 gateway api                      
 #===========================================
+
 envoy-gateway:
   # Deploy the Envoy Gateway controller
   manager:
@@ -120,6 +121,11 @@ secretStore:
     region: us-east-1
 externalSecret:
   name: db-credentials
+<<<<<<< HEAD
+=======
+
+  
+>>>>>>> b82c5cf (chore: update charts)
 #===========================================
 #                 istio                      
 #===========================================
@@ -135,6 +141,14 @@ externalSecret:
 #===========================================
 #                 gateway api                      
 #===========================================
+<<<<<<< HEAD
+=======
+
+
+ 
+
+
+>>>>>>> b82c5cf (chore: update charts)
 #===========================================
 #                 external secrets                      
 #===========================================
