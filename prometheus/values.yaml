@@ -8,7 +8,7 @@ namespace: monitoring
 grafana:
   HTTPRoute:
     name: grafana-route
-    syncWaves: "0"
+    syncWaves: "1"
     path: /grafana
     serviceName: prometheus-crd-grafana
     port: 80

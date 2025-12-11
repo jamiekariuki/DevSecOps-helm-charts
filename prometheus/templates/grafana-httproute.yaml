@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.grafana.HTTPRoute.name }}
   namespace: {{ .Values.namespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: {{ .Values.gateway.syncWaves | quote }} 
+    argocd.argoproj.io/sync-wave: {{ .Values.grafana.HTTPRoute.syncWaves | quote }} 
 spec:
   parentRefs:
     - name: {{ .Values.gateway.name }}          
@@ -14,7 +14,7 @@ spec:
   rules:
     - matches:
         - path:
-            type: Prefix
+            type: PathPrefix
             value: {{ .Values.grafana.HTTPRoute.path }} 
       forwardTo:
         - serviceName: {{ .Values.grafana.HTTPRoute.serviceName }} 
