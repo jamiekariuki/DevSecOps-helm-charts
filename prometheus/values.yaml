@@ -2,13 +2,31 @@ gateway:
   name: eg
   namespace: gateway
 
-hostName: "grafana.example.com"
 namespace: monitoring
 
 grafana:
   HTTPRoute:
     name: grafana-route
     syncWaves: "1"
+    hostName: "grafana.example.com"
     path: /
     serviceName: prometheus-crd-grafana
     port: 80
+
+prometheus:
+  HTTPRoute:
+    name: prometheus-route
+    syncWaves: "10"
+    hostName: "prometheus.example.com"
+    path: /
+    serviceName: prometheus-crd-kube-promet-prometheus
+    port: 9090
+
+alertmanager:
+  HTTPRoute:
+    name: alertmanager-route
+    syncWaves: "10"
+    hostName: "alertmanager.example.com"
+    path: /
+    serviceName: prometheus-crd-kube-promet-alertmanager
+    port: 9093
