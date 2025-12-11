@@ -4,3 +4,4 @@ gatewayClass:
 
 gateway:
   name: envoygateway
+  namespace: gateway
