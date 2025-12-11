@@ -16,6 +16,12 @@ spec:
         - path:
             type: PathPrefix
             value: {{ .Values.grafana.HTTPRoute.path }} 
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /      
       backendRefs:
         - name: {{ .Values.grafana.HTTPRoute.serviceName }} 
           port: {{ .Values.grafana.HTTPRoute.port }}
