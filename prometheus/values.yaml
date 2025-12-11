@@ -1,5 +1,5 @@
 gateway:
-  name: en
+  name: eg
   namespace: gateway
 
 hostName: "a4e88f73a92f84ba495419c2d3b90de5-1142177313.us-east-1.elb.amazonaws.com"
