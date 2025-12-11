@@ -9,6 +9,6 @@ grafana:
   HTTPRoute:
     name: grafana-route
     syncWaves: "1"
-    path: /grafana
+    path: /
     serviceName: prometheus-crd-grafana
     port: 80
