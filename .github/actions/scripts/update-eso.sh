@@ -43,7 +43,7 @@ yq -i ".serviceAccount.name = \"$SERVICE_ACCOUNT_NAME\"" "$HELM_CHART_PATH/value
 #service account annotation
 yq -i ".serviceAccount.annotations = \"$IRSA_ARN\"" "$VALUES_FILE"
 #external secret remoteref
-yq -i ".externalSecret.remoteRef.key.secretsmanagerArn = \"$SECRETSMANAGER_ARN\"" "$VALUES_FILE"
+yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "$VALUES_FILE"
 
 # --- 3. Commit & Push ---
 git config --global user.email "jamiekariuki18@gmail.com"
