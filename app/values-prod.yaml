@@ -1,4 +1,11 @@
 namespace: prod
+
+app:
+  HTTPRoute:
+    name: app-prod-route
+    hostName: "app.prod.com"
+  
+
 frontend:
   image:
     tag: v0.1.30

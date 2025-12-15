@@ -2,6 +2,21 @@ namespace: default
 #===========================================
 #                 app                      
 #===========================================
+
+#httproute
+gateway:
+  name: eg
+  namespace: gateway
+
+app:
+  HTTPRoute:
+    name: app-route
+    syncWaves: "1"
+    hostName: "app.example.com"
+    path: /
+    serviceName: frontend
+    port: 80
+
 #frontend
 frontend:
   name: frontend
@@ -26,9 +41,10 @@ frontend:
   env: []
   #service
   service:
-    type: NodePort
+    name: frontend
+    type: ClusterIP
     port: 80
-    nodePort: 31000
+    
 #backend
 backend:
   name: backend
@@ -51,97 +67,14 @@ backend:
       memory: "512Mi"
   podAnnotations: {}
   envFrom:
-    - secretRef:
-        name: backend-secrets
+    secretRef: db-credentials #must match with external secret store target 
   #service    
   service:
+    name: backend
     type: ClusterIP
     port: 8000
+
 #===========================================
 #                 service account                      
 #===========================================
-esoServiceAccount:
-  name: secret-manager-sa
-#===========================================
-#                 networking                      
-#===========================================
-#===========================================
-#                 rbac                      
-#===========================================
-#===========================================
-#                 gateway api                      
-#===========================================
 
-envoy-gateway:
-  # Deploy the Envoy Gateway controller
-  manager:
-    replicas: 2
-  # Deploy the Envoy Proxy (data plane)
-  envoyProxy:
-    enable: true
-    replicas: 2
-    service:
-      type: LoadBalancer
-      annotations:
-        service.beta.kubernetes.io/aws-load-balancer-type: nlb # or remove if you want classic LB
-        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-  # Enable Gateway API integration
-  gateway:
-    controllerName: envoy-gateway
-    gatewayClass:
-      name: envoy
-      create: true
-    gateway:
-      name: default-gateway
-      namespace: default
-      listeners:
-        - name: http
-          hostname: "example.com"
-          port: 80
-          protocol: HTTP
-        - name: https
-          port: 443
-          protocol: HTTPS
-          tls:
-            mode: Terminate
-            certificateRefs:
-              - name: my-cert # to be created by cert-manager
-  # Enable EnvoyGateway API resources
-  kubernetes:
-    provider: "kubernetes"
-#===========================================
-#                 external secrets                      
-#===========================================
-irsaArn: blank
-secretsmanagerArn: blank
-secretStore:
-  name: secretstore
-  provider:
-    service: SecretsManager
-    region: us-east-1
-externalSecret:
-  name: db-credentials
-
-#===========================================
-#                 istio                      
-#===========================================
-#===========================================
-#                 service account                      
-#===========================================
-#===========================================
-#                 networking                      
-#===========================================
-#===========================================
-#                 rbac                      
-#===========================================
-#===========================================
-#                 gateway api                      
-#===========================================
-
-#===========================================
-#                 external secrets                      
-#===========================================
-
-#===========================================
-#                 istio                      
-#===========================================

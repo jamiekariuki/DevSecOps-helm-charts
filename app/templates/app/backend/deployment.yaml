@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-{{ .Values.backend.name }}
+  name: {{ .Values.backend.name }}
   namespace: {{ .Values.namespace }}
   labels:
     {{- range $k, $v := .Values.backend.labels }}
@@ -35,5 +35,7 @@ spec:
             limits:
               cpu: {{ .Values.backend.resources.limits.cpu }}
               memory: {{ .Values.backend.resources.limits.memory }} 
+          envFrom:
+            secretRef: {{ .Values.backend.envFrom.secretRef }}    
 
 

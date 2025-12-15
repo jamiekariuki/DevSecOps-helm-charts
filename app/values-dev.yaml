@@ -1,4 +1,11 @@
 namespace: dev
+
+app:
+  HTTPRoute:
+    name: app-dev-route
+    hostName: "app.dev.com"
+  
+
 frontend:
   image:
     tag: v0.1.30

@@ -1,0 +1,8 @@
+namespace: prod
+
+serviceAccount:
+  annotations: blank  #irsaArn
+
+externalSecret:
+  remoteRef:
+    key: blank  #secret manager arn
