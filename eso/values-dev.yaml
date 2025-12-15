@@ -5,4 +5,4 @@ serviceAccount:
 
 externalSecret:
   remoteRef:
-    key: blank  #secret manager arn
+    key: blank  #secret manager arn 
