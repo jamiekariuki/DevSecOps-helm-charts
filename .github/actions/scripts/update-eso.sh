@@ -41,7 +41,7 @@ yq -i ".secretStore.provider.region = \"$REGION\"" "$HELM_CHART_PATH/values.yaml
 yq -i ".serviceAccount.name = \"$SERVICE_ACCOUNT_NAME\"" "$HELM_CHART_PATH/values.yaml"
 #per environment
 #service account role-arn
-yq -i ".serviceAccount.role-arn = \"$IRSA_ARN\"" "$VALUES_FILE"
+yq -i ".serviceAccount.roleArn = \"$IRSA_ARN\"" "$VALUES_FILE"
 #external secret remoteref
 yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "$VALUES_FILE"
 
