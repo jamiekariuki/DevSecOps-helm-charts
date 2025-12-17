@@ -1,7 +1,7 @@
 namespace: dev
 serviceAccount:
   name: secret-manager-sa
-  annotations: blank #irsaArn
+  annotations: {}  
   
 secretStore:
   name: secretstore
@@ -10,6 +10,6 @@ secretStore:
     region: us-east-1
 externalSecret:
   name: db-credentials
-  target: db-credentials #must match with the backebd secret ref
+  target: db-credentials
   remoteRef:
-    key: blank #secret manager arn
+    key: "" 
