@@ -1,7 +1,7 @@
 namespace: dev
 serviceAccount:
   name: secret-manager-sa
-  annotations: {}  
+  role-arn: ""  
   
 secretStore:
   name: secretstore
