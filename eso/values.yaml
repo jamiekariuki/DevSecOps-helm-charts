@@ -2,6 +2,7 @@ namespace: dev
 serviceAccount:
   name: secret-manager-sa
   annotations: blank #irsaArn
+  
 secretStore:
   name: secretstore
   provider:
