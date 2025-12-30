@@ -22,7 +22,7 @@ if [ -z "$SERVICE_ACCOUNT_NAME" ] || [ -z "$IRSA_ARN" ] || [ -z "$SECRETSMANAGER
   exit 1
 fi
 
-# --- 1. Ensure yq is available ---
+#1. Ensure yq is available 
 if ! command -v yq &> /dev/null
 then
     echo "Installing yq..."
@@ -34,7 +34,7 @@ VALUES_FILE="$HELM_CHART_PATH/values-$ENVIRONMENT.yaml"
 
 echo "Updating $VALUES_FILE..."
 
-# --- 2. Update values.yaml dynamically ---
+#2. Update values.yaml dynamically 
 #region
 yq -i ".secretStore.provider.region = \"$REGION\"" "$HELM_CHART_PATH/values.yaml"
 #service account
@@ -45,7 +45,7 @@ yq -i ".serviceAccount.roleArn = \"$IRSA_ARN\"" "$VALUES_FILE"
 #external secret remoteref
 yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "$VALUES_FILE"
 
-# --- 3. Commit & Push ---
+#3. Commit & Push
 git config --global user.email "jamiekariuki18@gmail.com"
 git config --global user.name "bot2" #diffent name from  update helm 
 

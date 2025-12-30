@@ -20,7 +20,7 @@ if [ -z "$SERVICE_NAME" ] || [ -z "$VERSION" ] || [ -z "$ECR_URL" ] || [ -z "$HE
   exit 1
 fi
 
-# --- 1. Ensure yq is available ---
+# 1. Ensure yq is available 
 if ! command -v yq &> /dev/null
 then
     echo "Installing yq..."
@@ -32,11 +32,11 @@ VALUES_FILE="$HELM_CHART_PATH/values-$ENVIRONMENT.yaml"
 
 echo "Updating $VALUES_FILE..."
 
-# --- 2. Update values.yaml dynamically ---
+# 2. Update values.yaml dynamically 
 yq -i ".${SERVICE_NAME}.image.repository = \"$ECR_URL\"" "$HELM_CHART_PATH/values.yaml"
 yq -i ".${SERVICE_NAME}.image.tag = \"$VERSION\"" "$VALUES_FILE"
 
-# --- 3. Commit & Push ---
+# 3. Commit & Push 
 git config --global user.email "jamiekariuki18@gmail.com"
 git config --global user.name "bot"
 
@@ -54,7 +54,7 @@ else
 fi
 
 
-# --- 4. Create Tag ---
+# 4. Create Tag 
 FINAL_TAG="${ENVIRONMENT}-${SERVICE_NAME}-${VERSION}"
 
 echo "Tagging with: $FINAL_TAG"
