@@ -28,7 +28,7 @@ jobs:
         chmod +x .github/actions/scripts/bot-commit.sh
         .github/actions/scripts/bot-commit.sh "bot"
 
-  # create tag for the previous environment
+  # create tag for the previous environment that was updated by previous pipline
   create-tag:
     needs: detect-bot
     if: needs.detect-bot.outputs.bot == 'true'
