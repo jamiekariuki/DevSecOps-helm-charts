@@ -1,7 +1,7 @@
 namespace: dev
 
 secretStore:
-  name: dev-secret-store
+  name: cluster-secret-store
   provider:
     service: SecretsManager
     region: us-east-1
