@@ -1,7 +1,5 @@
 namespace: dev
-serviceAccount:
-  name: dev-sa
-  roleArn: arn:aws:iam::466872246229:role/external-secrets-2026010116275415680000000f
+
 secretStore:
   name: cluster-secret-store
   provider:
