@@ -1,11 +1,7 @@
 namespace: dev
-
-
 serviceAccount:
   name: secret-manager-sa
   roleArn: arn:aws:iam::466872246229:role/external-secrets-2025123113413025040000000f
-
-
 secretStore:
   name: secretstore
   provider:
@@ -14,8 +10,6 @@ secretStore:
   serviceAccount:
     name: external-secrets-sa
     namespace: external-secrets
-
-
 externalSecret:
   name: db-credentials
   target: db-credentials
