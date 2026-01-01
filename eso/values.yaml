@@ -1,4 +1,4 @@
-namespace: dev
+namespace: external-secrets
 serviceAccount:
   name: secret-manager-sa
   roleArn: arn:aws:iam::466872246229:role/external-secrets-2025123113413025040000000f
