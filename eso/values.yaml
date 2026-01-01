@@ -3,7 +3,7 @@ serviceAccount:
   name: dev-sa
   roleArn: arn:aws:iam::466872246229:role/external-secrets-2026010116275415680000000f
 secretStore:
-  name: secretstore
+  name: ClusterSecretStore
   provider:
     service: SecretsManager
     region: us-east-1
