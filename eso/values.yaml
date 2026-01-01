@@ -1,14 +1,23 @@
 namespace: dev
+
+
 serviceAccount:
   name: secret-manager-sa
   roleArn: arn:aws:iam::466872246229:role/external-secrets-2025123113413025040000000f
+
+
 secretStore:
   name: secretstore
   provider:
     service: SecretsManager
     region: us-east-1
+  serviceAccount:
+    name: external-secrets-sa
+    namespace: external-secrets
+
+
 externalSecret:
   name: db-credentials
   target: db-credentials
   remoteRef:
-    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-cef072b3-4757-4ebf-b1c9-f3cbb01330e2-iXdFeB
+    key: db
