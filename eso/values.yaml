@@ -1,5 +1,4 @@
 namespace: dev
-
 secretStore:
   name: cluster-secret-store
   provider:
@@ -13,3 +12,5 @@ externalSecret:
   target: db-credentials
   remoteRef:
     key: db
+serviceAccount:
+  name: external-secrets-sa
