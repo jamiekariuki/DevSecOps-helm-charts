@@ -1,6 +1,6 @@
 namespace: dev
 serviceAccount:
-  roleArn: arn:aws:iam::466872246229:role/external-secrets-2026010217131818060000000f
+  roleArn: arn:aws:iam::466872246229:role/external-secrets-2026010221270320570000000f
 externalSecret:
   remoteRef:
-    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-1c8c0b6b-e5b5-4849-bc59-9f76b7abeb35-kXDwwk
+    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-9ff44757-580b-4b28-80eb-599f8a708d56-wrTv8s
