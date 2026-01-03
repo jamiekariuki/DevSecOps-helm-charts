@@ -24,3 +24,33 @@ spec:
           name: {{ .Values.grafana.HTTPRoute.serviceName }} 
           port: {{ .Values.grafana.HTTPRoute.port }}
           weight: 1
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+    argocd.argoproj.io/tracking-id: app-dev:gateway.networking.k8s.io/HTTPRoute:dev/app-route
+  name: app-route
+  namespace: monitoring
+spec:
+  hostnames:
+    - dev.example.com
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: eg
+      namespace: gateway
+  rules:
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: frontend
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
