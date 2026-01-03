@@ -8,34 +8,3 @@ gateway:
   namespace: gateway
   syncWaves: "5"
 
-
-#app httproute
-dev:
-  namespace: dev
-  HTTPRoute:
-    name: dev-app-route
-    syncWaves: "1"
-    hostName: "dev.example.com" 
-    path: /
-    serviceName: frontend
-    port: 80
-
-stage:
-  namespace: stage
-  HTTPRoute:
-    name: stage-app-route
-    syncWaves: "1"
-    hostName: "stage.example.com" 
-    path: /
-    serviceName: frontend
-    port: 80
-
-prod:
-  namespace: prod
-  HTTPRoute:
-    name: prod-app-route
-    syncWaves: "1"
-    hostName: "prod.example.com" 
-    path: /
-    serviceName: frontend
-    port: 80    
