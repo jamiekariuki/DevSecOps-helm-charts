@@ -4,6 +4,6 @@ frontend:
     tag: v0.1.32
 backend:
   image:
-    tag: v0.1.20
+    tag: v0.1.21
 config:
   host: dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com
