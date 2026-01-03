@@ -7,7 +7,6 @@ namespace: default
 gateway:
   name: eg
   namespace: gateway
-
 app:
   HTTPRoute:
     name: app-route
@@ -16,7 +15,6 @@ app:
     path: /
     serviceName: frontend
     port: 80
-
 #frontend
 frontend:
   name: frontend
@@ -44,7 +42,6 @@ frontend:
     name: frontend
     type: ClusterIP
     port: 80
-    
 #backend
 backend:
   name: backend
@@ -53,7 +50,7 @@ backend:
     app: backend
     component: backend
   image:
-    repository: jamiekariuki/blog
+    repository: 466872246229.dkr.ecr.us-east-1.amazonaws.com/backend-repository
     tag: "latest"
     pullPolicy: IfNotPresent
   containerPort: 8000
@@ -73,15 +70,12 @@ backend:
     name: backend
     type: ClusterIP
     port: 8000
-
 #config map
 config:
   name: config-db-credentials
-  dbname: 
+  dbname: "5432"
   host: ""
-  port:    
-
+  port:
 #===========================================
 #                 service account                      
 #===========================================
-

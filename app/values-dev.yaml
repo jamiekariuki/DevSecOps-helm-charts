@@ -1,16 +1,13 @@
 namespace: dev
-
 app:
   HTTPRoute:
     name: app-dev-route
     hostName: "app.dev.com"
-  
 frontend:
   image:
     tag: v0.1.30
 backend:
   image:
     tag: v0.1.19
-
 config:
-  host: empty
+  host: posgressdb
