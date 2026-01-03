@@ -60,12 +60,14 @@ backend:
     name: backend
     type: ClusterIP
     port: 8000
-#config map
+
 config:
   name: config-db-credentials
   dbname: "posgressdb"
   host: "dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com"
   port: "5432"
+
+
 #===========================================
 #                 service account                      
 #===========================================
