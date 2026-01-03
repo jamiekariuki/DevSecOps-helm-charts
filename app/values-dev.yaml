@@ -9,6 +9,10 @@ config:
   host: dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com
 
 
+gateway:
+  name: eg
+  namespace: gateway
+
 dev:
   namespace: dev
   HTTPRoute:
