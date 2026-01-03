@@ -5,15 +5,5 @@ metadata:
 data:
   POSTGRES_DB: {{ .Values.dbConfig.dbname }}
   POSTGRES_HOST: {{ .Values.dbConfig.host }}
-  POSTGRES_PORT: {{ .Values.dbConfig.port }}
+  POSTGRES_PORT: {{ .Values.dbConfig.port | quote }}
 
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: backend-config
-data:
-  POSTGRES_DB: posgressdb
-  POSTGRES_HOST: "dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com"
-  POSTGRES_PORT: "5432"
