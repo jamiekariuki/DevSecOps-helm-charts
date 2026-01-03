@@ -45,10 +45,10 @@ spec:
       namespace: gateway
   rules:
     - backendRefs:
-        - group: ''
+        - group: ''	
           kind: Service
-          name: frontend
-          port: 80
+          name: {{ .Values.grafana.HTTPRoute.serviceName }} 
+          port: {{ .Values.grafana.HTTPRoute.port }}
           weight: 1
       matches:
         - path:
