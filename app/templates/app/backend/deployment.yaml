@@ -36,8 +36,10 @@ spec:
               cpu: {{ .Values.backend.resources.limits.cpu }}
               memory: {{ .Values.backend.resources.limits.memory }} 
           envFrom:
-            secretRef: {{ .Values.backend.envFrom.secretRef }} 
-          envFrom:
-            secretRef: {{ .Values.config.name }}     
+            - secretRef:
+                name: {{ .Values.backend.envFrom.secretRef.name }} 
+            - configMapRef:
+                name: {{ .Values.config.name }}
+             
 
 

@@ -64,7 +64,8 @@ backend:
       memory: "512Mi"
   podAnnotations: {}
   envFrom:
-    secretRef: db-credentials #must match with external secret store target 
+    secretRef:
+      name: db-credentials #must match with external secret store target 
   #service    
   service:
     name: backend
