@@ -3,6 +3,16 @@ namespace: default
 #                 app                      
 #===========================================
 
+#http route
+app:
+  HTTPRoute:
+    name: dev-app-route
+    syncWaves: "1"
+    hostName: "dev.example.com" 
+    path: /
+    serviceName: frontend
+    port: 80
+
 #frontend
 frontend:
   name: frontend

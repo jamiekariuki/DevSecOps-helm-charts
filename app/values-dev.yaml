@@ -13,11 +13,3 @@ gateway:
   name: eg
   namespace: gateway
 
-app:
-  HTTPRoute:
-    name: dev-app-route
-    syncWaves: "1"
-    hostName: "dev.example.com" 
-    path: /
-    serviceName: frontend
-    port: 80
