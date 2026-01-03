@@ -7,7 +7,8 @@ metadata:
     argocd.argoproj.io/sync-wave: {{ .Values.argocd.HTTPRoute.syncWaves | quote }} 
 spec:
   parentRefs:
-    - name: {{ .Values.gateway.name }}          
+    - kind: Gateway
+      name: {{ .Values.gateway.name }}          
       namespace: {{ .Values.gateway.namespace }} 
   hostnames:
     - {{ .Values.argocd.HTTPRoute.hostName }}           
@@ -17,5 +18,7 @@ spec:
             type: PathPrefix
             value: {{ .Values.argocd.HTTPRoute.path }}      
       backendRefs:
-        - name: {{ .Values.argocd.HTTPRoute.serviceName }} 
+        - group: ''	
+          kind: Service
+          name: {{ .Values.argocd.HTTPRoute.serviceName }} 
           port: {{ .Values.argocd.HTTPRoute.port }}

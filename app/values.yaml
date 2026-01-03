@@ -11,7 +11,7 @@ app:
   HTTPRoute:
     name: app-route
     syncWaves: "1"
-    hostName: "app.example.com"
+    hostName: "app.dev.com"
     path: /
     serviceName: frontend
     port: 80
