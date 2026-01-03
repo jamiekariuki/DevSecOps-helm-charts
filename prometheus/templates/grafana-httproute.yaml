@@ -7,7 +7,9 @@ metadata:
     argocd.argoproj.io/sync-wave: {{ .Values.grafana.HTTPRoute.syncWaves | quote }} 
 spec:
   parentRefs:
-    - name: {{ .Values.gateway.name }}          
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: {{ .Values.gateway.name }}          
       namespace: {{ .Values.gateway.namespace }} 
   hostnames:
     - {{ .Values.grafana.HTTPRoute.hostName }}           
@@ -17,5 +19,8 @@ spec:
             type: PathPrefix
             value: {{ .Values.grafana.HTTPRoute.path }}      
       backendRefs:
-        - name: {{ .Values.grafana.HTTPRoute.serviceName }} 
+        - group: ''	
+          kind: Service
+          name: {{ .Values.grafana.HTTPRoute.serviceName }} 
           port: {{ .Values.grafana.HTTPRoute.port }}
+          weight: 1

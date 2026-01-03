@@ -7,7 +7,9 @@ metadata:
     argocd.argoproj.io/sync-wave: {{ .Values.prometheus.HTTPRoute.syncWaves | quote }} 
 spec:
   parentRefs:
-    - name: {{ .Values.gateway.name }}          
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: {{ .Values.gateway.name }}          
       namespace: {{ .Values.gateway.namespace }} 
   hostnames:
     - {{ .Values.prometheus.HTTPRoute.hostName }}           
@@ -17,5 +19,8 @@ spec:
             type: PathPrefix
             value: {{ .Values.prometheus.HTTPRoute.path }}      
       backendRefs:
-        - name: {{ .Values.prometheus.HTTPRoute.serviceName }} 
+        - group: ''	
+          kind: Service
+          name: {{ .Values.prometheus.HTTPRoute.serviceName }} 
           port: {{ .Values.prometheus.HTTPRoute.port }}
+          weight: 1
