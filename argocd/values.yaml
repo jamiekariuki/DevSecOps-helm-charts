@@ -18,4 +18,4 @@ dbConfig:
   name: db-credentials
   dbname: posgressdb
   host: "dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com"
-  port: 5432
+  port: "5432"

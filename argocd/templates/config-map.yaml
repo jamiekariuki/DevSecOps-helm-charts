@@ -6,5 +6,5 @@ metadata:
 data:
   POSTGRES_DB: {{ .Values.dbConfig.dbname }}
   POSTGRES_HOST: {{ .Values.dbConfig.host }}
-  POSTGRES_PORT: {{ .Values.dbConfig.port }}
+  POSTGRES_PORT: {{ .Values.dbConfig.port | quote }}
 
