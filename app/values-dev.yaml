@@ -8,3 +8,17 @@ backend:
     tag: v0.1.19
 config:
   host: dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com
+
+
+#httproute
+gateway:
+  name: eg
+  namespace: gateway
+app:
+  HTTPRoute:
+    name: app-route
+    syncWaves: "1"
+    hostName: "dev.example.com" 
+    path: /
+    serviceName: frontend
+    port: 80
