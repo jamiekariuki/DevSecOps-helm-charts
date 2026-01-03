@@ -1,9 +1,6 @@
 namespace: stage
 
-app:
-  HTTPRoute:
-    name: app-stage-route
-    hostName: "app.stage.com"
+
   
 frontend:
   image:
