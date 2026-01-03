@@ -71,7 +71,7 @@ yq -i ".config.dbname = \"$DB_INSTANCE_NAME\"" "app/values.yaml"
 #port
 yq -i ".config.port = \"$DB_INSTANCE_PORT\"" "app/values.yaml"
 #host
-yq -i ".config.host = \"$DB_INSTANCE_NAME\"" "app/values-$ENVIRONMENT.yaml"
+yq -i ".config.host = \"$DB_INSTANCE_ADDRESS\"" "app/values-$ENVIRONMENT.yaml"
 
 
 #3. Commit & Push
