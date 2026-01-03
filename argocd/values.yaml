@@ -13,13 +13,3 @@ argocd:
     serviceName: argocd-server
     port: 80
 
-#httproute
-
-app:
-  HTTPRoute:
-    name: app-route2
-    syncWaves: "1"
-    hostName: "dev.example.com" 
-    path: /
-    serviceName: frontend
-    port: 80    
