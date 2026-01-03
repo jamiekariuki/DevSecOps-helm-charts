@@ -5,12 +5,12 @@ app:
     name: app-dev-route
     hostName: "app.dev.com"
   
-
 frontend:
   image:
     tag: v0.1.30
 backend:
   image:
     tag: v0.1.19
-irsaArn: arn:aws:iam::466872246229:role/external-secrets-2025121109224361200000000f
-secretsmanagerArn: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-d44ea730-b2fa-4cf7-bf94-9a879e4275b1-jXLWiC
+
+config:
+  host: empty

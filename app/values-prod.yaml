@@ -5,7 +5,6 @@ app:
     name: app-prod-route
     hostName: "app.prod.com"
   
-
 frontend:
   image:
     tag: v0.1.30
@@ -13,6 +12,5 @@ backend:
   image:
     tag: v0.1.16
 
-
-irsaArn: blank
-secretsmanagerArn: blank
+config:
+  host: empty

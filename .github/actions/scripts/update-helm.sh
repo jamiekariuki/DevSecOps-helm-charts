@@ -1,26 +1,45 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# INPUTS
-SERVICE_NAME="$1"
-VERSION="$2"
-ECR_URL="$3"
-HELM_CHART_PATH="$4"
-ENVIRONMENT="$5"
+# INPUTS (must match caller order)
+ENVIRONMENT="$1"
+REGION="$2"
+IRSA_ARN="$3"
+SECRETSMANAGER_ARN="$4"
+DB_INSTANCE_ADDRESS="$5"
+DB_INSTANCE_NAME="$6"
+DB_INSTANCE_PORT="$7"
+FRONTEND_REPO_URL="$8"
+BACKEND_REPO_URL="$9"
+SERVICE_ACCOUNT_NAME="$10"
 
-echo "Service: $SERVICE_NAME"
-echo "Version: $VERSION"
-echo "ECR: $ECR_URL"
-echo "Helm Chart Path: $HELM_CHART_PATH"
 echo "Environment: $ENVIRONMENT"
+echo "Region: $REGION"
+echo "IRSA ARN: $IRSA_ARN"
+echo "Secrets Manager ARN: $SECRETSMANAGER_ARN"
+echo "DB Address: $DB_INSTANCE_ADDRESS"
+echo "DB Name: $DB_INSTANCE_NAME"
+echo "DB Port: $DB_INSTANCE_PORT"
+echo "Frontend Repo: $FRONTEND_REPO_URL"
+echo "Backend Repo: $BACKEND_REPO_URL"
+echo "service account name: $SERVICE_ACCOUNT_NAME"
 
-if [ -z "$SERVICE_NAME" ] || [ -z "$VERSION" ] || [ -z "$ECR_URL" ] || [ -z "$HELM_CHART_PATH" ] || [ -z "$ENVIRONMENT" ]; then
+# Validation
+if [ -z "$ENVIRONMENT" ] || \
+   [ -z "$REGION" ] || \
+   [ -z "$IRSA_ARN" ] || \
+   [ -z "$SECRETSMANAGER_ARN" ] || \
+   [ -z "$DB_INSTANCE_ADDRESS" ] || \
+   [ -z "$DB_INSTANCE_NAME" ] || \
+   [ -z "$DB_INSTANCE_PORT" ] || \
+   [ -z "$FRONTEND_REPO_URL" ] || \
+   [ -z "$SERVICE_ACCOUNT_NAME" ] || \
+   [ -z "$BACKEND_REPO_URL" ]; then
   echo "ERROR: Missing required arguments."
-  echo "Usage: update-helm.sh <service_name> <version> <ecr_url> <chart_path> <environment>"
   exit 1
 fi
 
-# 1. Ensure yq is available 
+#1. Ensure yq is available 
 if ! command -v yq &> /dev/null
 then
     echo "Installing yq..."
@@ -28,24 +47,43 @@ then
     sudo chmod +x /usr/bin/yq
 fi
 
-VALUES_FILE="$HELM_CHART_PATH/values-$ENVIRONMENT.yaml"
 
-echo "Updating $VALUES_FILE..."
+#2. updating values
+echo "Updating values..."
 
-# 2. Update values.yaml dynamically 
-yq -i ".${SERVICE_NAME}.image.repository = \"$ECR_URL\"" "$HELM_CHART_PATH/values.yaml"
-yq -i ".${SERVICE_NAME}.image.tag = \"$VERSION\"" "$VALUES_FILE"
+#-----update app ecr
+#frontend
+yq -i ".frontend.image.repository = \"$FRONTEND_REPO_URL\"" "app/values.yaml"
+#backend
+yq -i ".backend.image.repository = \"$BACKEND_REPO_URL\"" "app/values.yaml"
 
-# 3. Commit & Push 
+#-----update eso
+#region
+yq -i ".secretStore.provider.region = \"$REGION\"" "eso/values.yaml"
+#service account
+yq -i ".secretStore.serviceAccount.name = \"$SERVICE_ACCOUNT_NAME\"" "eso/values.yaml"
+#external secret remoteref
+yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "eso/values-$ENVIRONMENT"
+
+#-----update app config map
+#dbname
+yq -i ".config.dbname = \"$DB_INSTANCE_NAME\"" "app/values.yaml"
+#port
+yq -i ".config.dbname = \"$DB_INSTANCE_PORT\"" "app/values.yaml"
+#host
+yq -i ".config.host = \"$DB_INSTANCE_NAME\"" "app/values-$ENVIRONMENT.yaml"
+
+
+#3. Commit & Push
 git config --global user.email "jamiekariuki18@gmail.com"
-git config --global user.name "bot"
+git config --global user.name "bot2" #diffent name from  update helm 
 
 git add .
 
 if git diff --cached --quiet; then
   echo "No changes to commit."
 else
-  git commit -m "${SERVICE_NAME} rollout to ${VERSION} in ${ENVIRONMENT}"
+  git commit -m "update helm values"
 
   echo "Syncing with remote main before pushing..."
   git pull --rebase origin main
@@ -53,12 +91,3 @@ else
   git push
 fi
 
-
-# 4. Create Tag 
-FINAL_TAG="${ENVIRONMENT}-${SERVICE_NAME}-${VERSION}"
-
-echo "Tagging with: $FINAL_TAG"
-git tag "$FINAL_TAG"
-git push origin "$FINAL_TAG"
-
-echo "Done."
