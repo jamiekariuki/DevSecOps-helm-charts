@@ -39,7 +39,7 @@ spec:
             - secretRef:
                 name: {{ .Values.backend.envFrom.secretRef.name }} 
             - configMapRef:
-                name: {{ .Values.config.name }}
+                name: {{ .Values.dbConfig.name }}
              
 
 
