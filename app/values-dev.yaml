@@ -7,3 +7,14 @@ backend:
     tag: v0.1.21
 config:
   host: dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com
+
+
+dev:
+  namespace: dev
+  HTTPRoute:
+    name: dev-app-route
+    syncWaves: "1"
+    hostName: "dev.example.com" 
+    path: /
+    serviceName: frontend
+    port: 80
