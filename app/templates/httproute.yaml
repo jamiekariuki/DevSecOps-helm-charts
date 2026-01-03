@@ -33,7 +33,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: '1'
   name: grafana-route-2
-  namespace: monitoring
+  namespace: dev
 spec:
   hostnames:
     - grafana2.example.com
