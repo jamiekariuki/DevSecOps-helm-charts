@@ -3,18 +3,7 @@ namespace: default
 #                 app                      
 #===========================================
 
-#httproute
-gateway:
-  name: eg
-  namespace: gateway
-app:
-  HTTPRoute:
-    name: app-route
-    syncWaves: "1"
-    hostName: "dev.example.com" 
-    path: /
-    serviceName: frontend
-    port: 80
+
 #frontend
 frontend:
   name: frontend
