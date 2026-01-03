@@ -7,3 +7,13 @@ data:
   POSTGRES_HOST: {{ .Values.config.host }}
   POSTGRES_PORT: {{ .Values.config.port }}
 
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  POSTGRES_DB: backenddb
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
