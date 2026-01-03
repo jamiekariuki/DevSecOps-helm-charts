@@ -16,7 +16,7 @@ gateway:
   namespace: gateway
 app:
   HTTPRoute:
-    name: app-route
+    name: app-route2
     syncWaves: "1"
     hostName: "dev.example.com" 
     path: /
