@@ -1,16 +1,13 @@
 namespace: prod
-  
 frontend:
   image:
-    tag: v0.1.30
+    tag: v0.1.33
 backend:
   image:
     tag: v0.1.16
-
 config:
   host: empty
-
 app:
   HTTPRoute:
     name: prod-app-route
-    hostName: "prod.example.com" 
+    hostName: "prod.example.com"
