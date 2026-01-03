@@ -1,0 +1,86 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Values.dev.HTTPRoute.name }}
+  namespace: {{ .Values.dev.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.dev.HTTPRoute.syncWaves | quote }} 
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: {{ .Values.gateway.name }}          
+      namespace: {{ .Values.gateway.namespace }} 
+  hostnames:
+    - {{ .Values.dev.HTTPRoute.hostName }}           
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ .Values.dev.HTTPRoute.path }}      
+      backendRefs:
+        - group: ''	
+          kind: Service
+          name: {{ .Values.dev.HTTPRoute.serviceName }} 
+          port: {{ .Values.dev.HTTPRoute.port }}
+          weight: 1
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Values.stage.HTTPRoute.name }}
+  namespace: {{ .Values.stage.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.stage.HTTPRoute.syncWaves | quote }} 
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: {{ .Values.gateway.name }}          
+      namespace: {{ .Values.gateway.namespace }} 
+  hostnames:
+    - {{ .Values.stage.HTTPRoute.hostName }}           
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ .Values.stage.HTTPRoute.path }}      
+      backendRefs:
+        - group: ''	
+          kind: Service
+          name: {{ .Values.stage.HTTPRoute.serviceName }} 
+          port: {{ .Values.stage.HTTPRoute.port }}
+          weight: 1
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Values.prod.HTTPRoute.name }}
+  namespace: {{ .Values.prod.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.prod.HTTPRoute.syncWaves | quote }} 
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: {{ .Values.gateway.name }}          
+      namespace: {{ .Values.gateway.namespace }} 
+  hostnames:
+    - {{ .Values.prod.HTTPRoute.hostName }}           
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ .Values.prod.HTTPRoute.path }}      
+      backendRefs:
+        - group: ''	
+          kind: Service
+          name: {{ .Values.prod.HTTPRoute.serviceName }} 
+          port: {{ .Values.prod.HTTPRoute.port }}
+          weight: 1
+
+
