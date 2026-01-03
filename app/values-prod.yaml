@@ -1,6 +1,4 @@
 namespace: prod
-
-
   
 frontend:
   image:
@@ -11,3 +9,8 @@ backend:
 
 config:
   host: empty
+
+app:
+  HTTPRoute:
+    name: prod-app-route
+    hostName: "prod.example.com" 

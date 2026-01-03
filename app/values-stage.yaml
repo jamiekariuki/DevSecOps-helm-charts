@@ -1,6 +1,4 @@
 namespace: stage
-
-
   
 frontend:
   image:
@@ -11,3 +9,8 @@ backend:
 
 config:
   host: empty
+
+app:
+  HTTPRoute:
+    name: stage-app-route
+    hostName: "stage.example.com"   

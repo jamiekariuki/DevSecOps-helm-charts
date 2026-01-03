@@ -9,5 +9,8 @@ config:
   host: dev-db.c0nu6occexai.us-east-1.rds.amazonaws.com
 
 
-
+app:
+  HTTPRoute:
+    name: dev-app-route
+    hostName: "dev.example.com" 
 
