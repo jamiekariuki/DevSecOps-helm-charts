@@ -4,6 +4,10 @@ namespace: default
 #===========================================
 
 #http route
+gateway:
+  name: eg
+  namespace: gateway
+
 app:
   HTTPRoute:
     name: dev-app-route
