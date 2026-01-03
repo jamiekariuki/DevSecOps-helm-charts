@@ -13,8 +13,7 @@ gateway:
   name: eg
   namespace: gateway
 
-dev:
-  namespace: dev
+app:
   HTTPRoute:
     name: dev-app-route
     syncWaves: "1"
