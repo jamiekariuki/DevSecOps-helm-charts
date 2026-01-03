@@ -32,11 +32,12 @@ kind: HTTPRoute
 metadata:
   annotations:
     argocd.argoproj.io/sync-wave: '1'
-  name: grafana-route-2
+    argocd.argoproj.io/tracking-id: app-dev:gateway.networking.k8s.io/HTTPRoute:dev/app-route
+  name: app-route-2
   namespace: dev
 spec:
   hostnames:
-    - grafana2.example.com
+    - dev.example.com
   parentRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
@@ -46,7 +47,7 @@ spec:
     - backendRefs:
         - group: ''
           kind: Service
-          name: prometheus-crd-grafana
+          name: frontend
           port: 80
           weight: 1
       matches:
