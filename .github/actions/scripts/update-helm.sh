@@ -69,7 +69,7 @@ yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "eso/values-$ENV
 #dbname
 yq -i ".config.dbname = \"$DB_INSTANCE_NAME\"" "app/values.yaml"
 #port
-yq -i ".config.dbname = \"$DB_INSTANCE_PORT\"" "app/values.yaml"
+yq -i ".config.port = \"$DB_INSTANCE_PORT\"" "app/values.yaml"
 #host
 yq -i ".config.host = \"$DB_INSTANCE_NAME\"" "app/values-$ENVIRONMENT.yaml"
 
