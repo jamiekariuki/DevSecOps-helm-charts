@@ -1,16 +1,13 @@
 namespace: stage
-  
 frontend:
   image:
     tag: v0.1.30
 backend:
   image:
-    tag: v0.1.16
-
+    tag: v0.1.23
 config:
   host: empty
-
 app:
   HTTPRoute:
     name: stage-app-route
-    hostName: "stage.example.com"   
+    hostName: "stage.example.com"
