@@ -73,9 +73,9 @@ backend:
 #config map
 config:
   name: config-db-credentials
-  dbname: "5432"
+  dbname: "posgressdb"
   host: ""
-  port:
+  port: "5432"
 #===========================================
 #                 service account                      
 #===========================================
