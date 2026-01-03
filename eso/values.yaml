@@ -11,4 +11,4 @@ externalSecret:
   name: db-credentials
   target: db-credentials
   remoteRef:
-    key: ""
+    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-b49306ff-8757-44ff-80bf-0373d3cb0046-vbSNY0
