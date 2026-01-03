@@ -63,7 +63,7 @@ yq -i ".secretStore.provider.region = \"$REGION\"" "eso/values.yaml"
 #service account
 yq -i ".secretStore.serviceAccount.name = \"$SERVICE_ACCOUNT_NAME\"" "eso/values.yaml"
 #external secret remoteref
-yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "eso/values-$ENVIRONMENT"
+yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "eso/values-$ENVIRONMENT.yaml"
 
 #-----update app config map
 #dbname
