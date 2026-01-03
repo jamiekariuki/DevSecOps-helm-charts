@@ -7,7 +7,8 @@ metadata:
     argocd.argoproj.io/sync-wave: {{ .Values.argocd.HTTPRoute.syncWaves | quote }} 
 spec:
   parentRefs:
-    - kind: Gateway
+    - group: gateway.networking.k8s.io
+      kind: Gateway
       name: {{ .Values.gateway.name }}          
       namespace: {{ .Values.gateway.namespace }} 
   hostnames:
