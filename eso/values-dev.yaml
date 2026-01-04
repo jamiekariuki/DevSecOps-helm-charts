@@ -1,4 +1,0 @@
-namespace: dev
-externalSecret:
-  remoteRef:
-    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-01cbfbc8-9e69-4556-8968-5684a2ffb86e-8jD5rK

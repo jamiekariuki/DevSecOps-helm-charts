@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Values.dbConfig.name }}
+  namespace: {{ .Values.namespace }}
 data:
   POSTGRES_DB: {{ .Values.dbConfig.dbname }}
   POSTGRES_HOST: {{ .Values.dbConfig.host }}

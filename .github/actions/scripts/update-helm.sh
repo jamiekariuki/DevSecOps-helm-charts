@@ -61,9 +61,10 @@ yq -i ".backend.image.repository = \"$BACKEND_REPO_URL\"" "app/values.yaml"
 #region
 yq -i ".secretStore.provider.region = \"$REGION\"" "eso/values.yaml"
 #service account
-yq -i ".secretStore.serviceAccount.name = \"$SERVICE_ACCOUNT_NAME\"" "eso/values.yaml"
-#external secret remoteref
-yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "eso/values-$ENVIRONMENT.yaml"
+yq -i ".serviceAccount.name = \"$SERVICE_ACCOUNT_NAME\"" "eso/values.yaml"
+yq -i ".serviceAccount.roleArn = \"$IRSA_ARN\"" "eso/values.yaml"
+#external secret remoteref in app
+yq -i ".externalSecret.remoteRef.key = \"$SECRETSMANAGER_ARN\"" "app/values-$ENVIRONMENT.yaml"
 
 #-----update app config map
 #dbname
