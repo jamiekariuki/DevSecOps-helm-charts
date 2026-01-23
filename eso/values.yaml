@@ -12,4 +12,4 @@ secretStore:
 serviceAccount:
   name: external-secrets-sa
   namespace: external-secrets
-  roleArn: arn:aws:iam::466872246229:role/external-secrets-2026010410405734200000000d
+  roleArn: arn:aws:iam::466872246229:role/external-secrets-2026012308332258380000000d

@@ -13,4 +13,4 @@ app:
     hostName: "dev.example.com"
 externalSecret:
   remoteRef:
-    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-af91fbb1-35d5-4750-89ea-724be13ddc24-rJNfy5
+    key: arn:aws:secretsmanager:us-east-1:466872246229:secret:rds!db-f1ff53ed-d018-490d-9a0e-7147bce35319-iT2sTe
